@@ -1739,3 +1739,402 @@ Static reconnaissance is sufficient to design and build the campaign without inv
 The remaining uncertainty is concentrated in runtime integration and balance, not basic architecture. None of the unknowns prevents creation of a minimal campaign skeleton, but several—especially user-campaign discovery, result progression, logistics timing, persistent generated-unit IDs, carrier accounting, and political ROE—must be resolved before committing to ten finished missions.
 
 Stage 7 is complete. The staged implementation, testing, deployment, and version-control plan remain reserved for Stage 8.
+
+## Stage 8 — Proposed build plan
+
+### 1. Build principles and definition of done
+
+The campaign should be built as original user/mod content, with Pacific Strike used as a structural reference rather than edited or redistributed. Repository source remains authoritative; the game-install user folder receives disposable deployed copies.
+
+The campaign is complete only when:
+
+- exactly ten playable missions form a coherent alternate-history arc;
+- Mission 1 begins below full US-Soviet war and offers no carrier task force;
+- player losses, damage, ammunition, points, cap, and selected forces carry correctly;
+- major resupply/reselection and low/no-resupply legs are clearly communicated and mechanically verified;
+- NATO escalation changes both narrative and actual player availability;
+- a complete, viable carrier task force is available for the final campaign phase;
+- every mission has briefing, objective, victory, defeat, and continuity text;
+- a clean save can finish the campaign on each supported difficulty without editing files;
+- original game content remains untouched and absent from source control.
+
+### 2. Phase 0 — Freeze the development contract
+
+Before creating the skeleton, record a small project manifest containing:
+
+- game version/build identifier;
+- point-formula/cache version (currently observed as 134);
+- campaign ID and folder name;
+- supported language set initially (`en` only);
+- difficulty levels to support;
+- intended task-force-mode rules;
+- known stock references used as templates;
+- deployment target under `Sea Power_Data\StreamingAssets\user\campaigns`;
+- save location and naming convention for disposable test saves.
+
+Recommended campaign ID: `falklands-1982-alternate-history`. It should remain stable after the first persistence test because folder IDs, mission numbering, and referenced paths can become save-facing identifiers.
+
+### 3. Campaign skeleton
+
+#### Source layout
+
+The repository should evolve toward:
+
+```text
+sea-power-falklands-1982/
+├── docs/
+│   ├── FALKLANDS_CAMPAIGN_RESEARCH.md
+│   ├── campaign-design.md
+│   ├── economy-ledger.csv
+│   ├── unit-roster.md
+│   ├── test-matrix.md
+│   └── build-manifest.md
+├── mod/
+│   └── campaigns/
+│       └── falklands-1982-alternate-history/
+│           ├── campaign.ini
+│           ├── player_task_force_roster.ini
+│           ├── unit_roster_descriptions_en.ini
+│           ├── missions/
+│           └── art/
+├── tools/
+│   ├── validate-campaign.*
+│   └── deploy-local.*
+└── README.md
+```
+
+The exact deployed relative path must first pass the discovery test from Stage 7. `tools/deploy-local` should eventually copy only the authored campaign folder into the user campaign directory. It should never write to `StreamingAssets\original` and should support a dry run plus a manifest of copied files.
+
+#### Minimal skeleton test
+
+The first authored artifact should not be Mission 1. It should be a disposable two-node smoke-test campaign:
+
+1. an English `FreeEvent` using a minimal proven XML template;
+2. a trivial mission with one controllable unit, one objective, and explicit victory/defeat triggers.
+
+This establishes discovery, path resolution, XML loading, save creation, progression, result threshold, and campaign removal without entangling real design. Once proven, replace the disposable content with a ten-mission timeline skeleton containing stable node numbers, placeholder names, and narrative slots. Placeholder tactical missions should remain deliberately unplayable until their implementation phase, avoiding false progress.
+
+#### Timeline numbering
+
+Numbered `[MissionN]` entries count every mission and narrative event, not only the ten tactical operations. Allocate a written node ledger before authoring. A practical campaign may contain 10 playable missions and roughly 10–18 narrative nodes. Stable node IDs prevent broken `Parents`, expiry targets, and old saves.
+
+Use descriptive comments and a ledger such as:
+
+| Node | Kind | Story date | Parent(s) | Unlock/result effect | Status |
+| ---: | --- | --- | --- | --- | --- |
+| 1 | opening `FreeEvent` | TBD | root | unlock Mission 1 | planned |
+| 2 | playable Mission 1 | TBD | 1 | points/cap/variables | planned |
+| 3 | consequence/news | TBD | 2 | unlock next operation | planned |
+
+Do not finalize later node numbers until optional missions and multi-page narrative events are decided.
+
+### 4. Narrative framework
+
+Create a campaign narrative bible before writing final prose. It should track:
+
+- public history versus classified reality;
+- US, Soviet, Argentine, British, and NATO political positions after each mission;
+- what the player knows at mission start;
+- what is revealed during play;
+- the result assumed by subsequent main-route missions;
+- the trigger for NATO Article 5;
+- the Soviet strategic-footprint objective beyond the Falklands;
+- recurring commanders, task-force name, intelligence sources, and document voice;
+- substitute-platform disclosure policy.
+
+Each playable mission receives a narrative packet with:
+
+1. campaign tile title/date/location;
+2. `MissionIntro` strategic and operational context;
+3. resupply/builder/special-note text matching actual mechanics;
+4. scenario start orders;
+5. zero or more trigger-driven warnings/tasking changes;
+6. objective labels;
+7. victory message;
+8. distinct defeat messages for materially different failure causes;
+9. mechanical unlock/debrief notice if applicable;
+10. next `FreeEvent` consequence, if any.
+
+Use newspaper layouts for public events and JCS/CIA/State/NATO/naval-message layouts for classified developments. Begin by adapting the structure of proven templates into newly authored XML rather than designing novel XAML controls. Keep English content complete before adding any additional language paths.
+
+### 5. Ten-mission progression framework
+
+The mission list should be written in two passes: first by required campaign function, then by exact scenario. This prevents an attractive scenario idea from leaving a persistence or escalation gap.
+
+| Mission band | Required campaign function | Force/economy intent |
+| --- | --- | --- |
+| 1 | Cuba convoy interception below full-war threshold | Small short-notice US force; no carrier; establish identification/ROE and persistence. |
+| 2–3 | Initial US response and movement toward the wider crisis | Add limited escorts, submarine/MPA options, and introduce consequences of Soviet-Argentine coordination. |
+| 3–4 | First continuity pair | Little/no resupply between selected operations so Mission 3 expenditure affects Mission 4. |
+| 4–6 | South Atlantic commitment and escalation | Broaden US force choice, introduce land-based air/amphibious or logistics roles as appropriate, and make Soviet strategic foothold explicit. |
+| 6–7 | Political threshold / Article 5 setup and trigger | Narrative incident plus persistent outcome; NATO support becomes politically credible. |
+| 7–8 | Major NATO reinforcement/reset | Significant builder, repair, rearm, cap, and allowlist expansion; selected NATO/UK stand-ins appear. |
+| 8–9 | High-threat continuation | Force the enlarged coalition to absorb losses and conserve stores before the climax. |
+| 9–10 | Carrier escalation and decisive operation | Unlock/award sufficient carrier capability and escorts; final mission permits a credible full carrier task force. |
+
+These are functional slots, not final mission designs. Only Mission 1's Cuba-convoy concept is currently fixed enough to guide prototyping. The exact Article 5 incident, South Atlantic engagements, optional operations, and finale must be decided in `campaign-design.md` before tactical authoring.
+
+#### Branching policy
+
+Until defeat continuation is proven, use a main route that requires `CostlyVictory` or better and permits retry. Strategic variation should come from optional/parallel missions and persistent variables, not speculative defeat branches. Optional missions should provide a clear tradeoff—points/cap, threat reduction, intelligence, loadout access, or an awarded unit—and expire at an explicit advance point.
+
+### 6. Player-force economy
+
+#### Build the roster before setting rewards
+
+Create a reviewed roster table with one row per allowed class/variant/squadron/loadout:
+
+| Field | Purpose |
+| --- | --- |
+| Internal reference | Exact class plus `VariantN`/`SquadronN`. |
+| Display nation/flag | Actual or overridden identity. |
+| Represented historical role | What the stand-in is meant to portray. |
+| Service-date evidence | Database interval and historical note. |
+| Base/loadout cost | Current cache/runtime value and formula version. |
+| Unlock tier | Mission/band where it becomes available. |
+| Limits | Quantity, mission allowlist, carrier/airbase dependency. |
+| Substitution caveat | Capability differences requiring balance compensation. |
+
+Generate rather than manually transcribe current prices where possible. Commit a cost snapshot tagged with the game build, but treat it as recalculable evidence rather than permanent truth.
+
+#### Economy calibration sequence
+
+1. Define the minimum viable Mission 1 force and two or three alternative legal builds.
+2. Set starting cap slightly above the most expensive viable small-force build, not above any carrier package.
+3. Ensure starting spendable points permit meaningful choice without buying every available unit.
+4. Define a minimum viable force and an aspirational force for every mission.
+5. Price repair/replacement pressure using expected rather than perfect play.
+6. Set cap growth so new unlocks are usable when announced.
+7. Reserve large cap increases or mandatory grants for theater reinforcement and NATO escalation.
+8. Measure a complete carrier package—hull, air wing, escorts, submarine, and loadouts—then make the late-campaign cap support it with a modest choice margin.
+9. Run separate ledgers for main-route-only and all-optional-missions completion.
+10. Repeat calculations for Easy, Moderate, and Difficult, including their reward, repair, proficiency, and air-wing differences.
+
+Do not copy Pacific Strike's numbers blindly. Its 500-point Moderate start and 1,950/2,350 main/all-optional final authored caps are useful pacing references, but our roster and complete carrier package determine the correct scale.
+
+#### Economy acceptance criteria
+
+- Mission 1 has at least two meaningfully different viable task forces.
+- No carrier or equivalent aviation ship can be selected before its story unlock.
+- Skipping optional missions does not make the main campaign unwinnable.
+- Completing optional missions provides noticeable flexibility without trivializing later missions.
+- One early loss hurts but does not necessarily force a restart; repeated careless losses do.
+- No-resupply pairs create ammunition/repair tension without requiring foreknowledge of hidden threats.
+- The final carrier package is viable on the main route; optional completion improves escorts, reserves, or air-wing flexibility rather than being mandatory.
+- Difficult remains feasible when `ShipIncludesAirwing=False` or is deliberately configured differently after the carrier accounting test.
+
+### 7. Unit availability rules
+
+Use explicit per-mission allowlists and explicit numbered variants/squadrons. Do not expose a class merely because its base file exists.
+
+Recommended availability tiers:
+
+| Tier | Narrative meaning | Typical contents |
+| --- | --- | --- |
+| 0 — Short notice | US assets immediately available for Cuba interception | Small US surface combatants, limited patrol/recon support, perhaps one submarine option; no carrier. |
+| 1 — US mobilization | National response broadens | Additional escorts, SSNs, maritime patrol, tankers/support, land-based tactical aircraft where bases support them. |
+| 2 — South Atlantic commitment | Sustained US theater presence | Higher-end escorts, amphibious/logistics assets, more air and reconnaissance options. |
+| 3 — NATO reinforcement | Political threshold crossed | Reviewed allied units and US substitutes carrying UK/NATO flags; NATO air/sea options. |
+| 4 — Carrier commitment | Decisive coalition phase | Period-valid carrier hull, coherent air wing, escorts, submarine screen, and replenishment/support choices. |
+
+Argentina and Britain require a substitution register. Every relagged unit must state:
+
+- actual underlying platform;
+- displayed/represented identity;
+- historical role being approximated;
+- capabilities that are too strong or too weak;
+- scenario compensations such as quantity, loadout, readiness, proficiency, ROE, or positioning.
+
+Flag changes should never be used to imply that equipment changed. Soviet units relagged as Argentine must be selected especially conservatively because their missile, sensor, and air-defense capability may exceed the represented force.
+
+### 8. Resupply and continuation plan
+
+Author logistics as a campaign rhythm, not an afterthought. Use three named node classes:
+
+- **Reset node:** builder + repair + rearm; major reinforcement/reselection point.
+- **Continuation node:** builder access as narratively justified, but repair/rearm off; prior state matters.
+- **Detached node:** only assigned/selected subset deploys; main force remains out of action.
+
+A provisional ten-mission cadence for playtesting is:
+
+| Transition | Provisional logistics intent |
+| --- | --- |
+| Start → M1 | Initial builder, fully ready small force. |
+| M1 → M2 | Major US mobilization/reselection; reset is narratively plausible. |
+| M2 → M3 | Full or partial support depending on chosen transit story. |
+| M3 → M4 | Deliberate continuation with little/no repair or rearm. |
+| M4 → M5 | Major South Atlantic reset/reinforcement. |
+| M5 → M6 | Limited support or detached operation. |
+| M6 → M7 | Continuation into political escalation. |
+| M7 → M8 | Major NATO reset, grants/unlocks, cap expansion. |
+| M8 → M9 | Limited/no resupply high-threat continuation. |
+| M9 → M10 | Carrier commitment and final major reselection/rearm, unless the final design deliberately makes M9 the carrier preparation node. |
+
+This cadence is provisional and should change with the final story geography. Every transition must be checked against travel time, basing, replenishment access, and whether the UI applies node logistics before or after the operation. Player-facing logistics text must be generated from the same design ledger as the mechanical flags so they cannot disagree.
+
+### 9. NATO escalation plan
+
+Article 5 should be a multi-layer state transition rather than a single line of prose:
+
+1. **Foreshadowing:** between-mission intelligence and public disagreement over treaty scope.
+2. **Trigger incident:** a mission event attacks, seizes, or destroys a qualifying NATO asset or territory; a triggered message changes immediate tasking.
+3. **Persistent state:** mission completion sets a clearly named campaign variable such as an Article 5/escalation flag.
+4. **Political event:** the next timeline node presents NATO deliberation/decision through news and classified orders.
+5. **Mechanical unlock:** subsequent mission nodes expand allowlists, cap, loadouts, and optionally grant story-mandated allied units.
+6. **Visual identity:** nation/flag overrides present available stand-ins as British or other NATO forces while preserving an internal substitution record.
+7. **Gameplay consequence:** Soviet force posture also escalates; NATO entry should not be only a player reward.
+
+If runtime testing cannot prove conditional allowlists directly from one variable, implement Article 5 on the mandatory main route so its successor nodes simply contain the expanded roster. Optional variables can still alter enemy strength or grant additional support.
+
+### 10. Mission implementation order
+
+Do not build all ten missions chronologically. Implement in risk order:
+
+1. **Disposable campaign smoke test** — discovery, free event, trivial scenario, result/save.
+2. **Persistence laboratory** — two tiny missions testing selected-unit carry-over, damage, ammunition, builder, repair, and rearm.
+3. **Mission 1 vertical slice** — convoy route, detection/classification, political messages, arrival failure, victory, and small-force builder. Use placeholder narrative/art until mechanics are stable.
+4. **First continuity pair** — whichever future Missions 3–4 best exercise no-resupply carry-over.
+5. **Detached/subset operation** — only if retained in the final outline.
+6. **Land-based air/airbase mission** — validate squadron selection, loadouts, basing, recovery, and persistent aircraft losses.
+7. **Article 5 transition pair** — trigger mission plus following NATO-unlock node.
+8. **Carrier laboratory** — separate from a full scenario; establish package costs, generation, aviation, persistence, and performance.
+9. **Final carrier mission vertical slice** — worst-case unit count and air activity first.
+10. **Remaining mid-campaign missions** — fill the proven architecture around already-tested transitions.
+11. **Narrative/art completion** — replace placeholders only after node IDs and outcomes are stable.
+12. **Full-campaign balance pass** — fresh-save runs, then polish.
+
+Within each mission, build in this order: map/environment → sides and fixed units → routes/formations → primary objective/victory/failure → persistent-force insertion → reinforcements/secondary triggers → messages → map/briefing aids → balance → final narrative/art.
+
+### 11. Testing strategy
+
+#### Static validation
+
+Create a project validator that checks:
+
+- `NumberOfMissions` equals the numbered node count;
+- node IDs are unique and contiguous;
+- all `Parents` and expiry references exist;
+- every `MissionFile`, XML, image, roster-description, and localized path exists;
+- scenario unit counts match numbered sections;
+- trigger counts match trigger sections;
+- trigger message/intel keys exist in `[Language_en]`;
+- objective action IDs match `[TaskforceN_Objectives]` and `Objective_<id>` labels;
+- formation and waypoint unit references exist;
+- allowlist class/variant/squadron/loadout references resolve;
+- no file points into the repository or an absolute developer path;
+- no original game file is included in the deployment manifest.
+
+#### Mission test layers
+
+Each mission needs:
+
+1. load/syntax smoke test;
+2. no-player accelerated AI/route test where applicable;
+3. fastest expected victory path;
+4. every authored defeat path;
+5. objective/message/mission-end verification;
+6. minimum viable player force run;
+7. alternative force-composition run;
+8. high-loss and low-ammunition run;
+9. persistence check into the next mission;
+10. difficulty and performance pass.
+
+#### Campaign matrix
+
+At minimum test:
+
+- main route with no optional missions;
+- all optional missions completed;
+- optional missions allowed to expire;
+- Easy, Moderate, and Difficult fresh starts;
+- conservative/low-loss and high-loss playthroughs;
+- carrier unlock with and without optional economic bonuses;
+- save/quit/reload at every major logistics or unlock boundary;
+- one clean run after any game update or point-formula change.
+
+Record test evidence in `docs/test-matrix.md`: commit, game build, save name, difficulty, chosen force, opening and closing points/cap, losses, damage/ammunition state, objective result, unlocks, defects, and pass/fail.
+
+### 12. Safe iteration and version-control strategy
+
+#### Source versus deployment
+
+- `mod/` is source of truth.
+- The deployment folder under `StreamingAssets\user\campaigns` is generated/disposable.
+- Never edit `StreamingAssets\original`.
+- Never commit the game installation, managed assemblies, original campaign/unit files, caches, or saves.
+- Keep extracted/decompiled material outside Git or ignored.
+- Deployment should copy only an allowlisted project subtree and report the exact destination.
+- Undeploy should target only the exact campaign ID after resolving and verifying its absolute path.
+
+#### Git practice
+
+- Keep `main` always loadable once the skeleton milestone is reached.
+- Use short-lived branches for one mission or one systemic feature when work becomes substantial.
+- Make small commits by concern: skeleton, trigger logic, narrative, economy, art, or validation—not one campaign-wide dump.
+- Include the mission/node ID in commit messages where applicable.
+- Tag verified milestones, for example `skeleton-v1`, `mission-01-playable`, `persistence-proven`, `carrier-proven`, and `campaign-beta-1`.
+- Before rebasing or changing stable node/variable IDs, document save incompatibility and preserve a tag.
+- Use pull/push before and after each work session so a future session begins from the private repository, not memory alone.
+
+#### Artifact policy
+
+- Commit original authored INI/XML/text and project-owned art.
+- Prefer source art plus optimized runtime exports when licensing and repository size permit.
+- Use Git LFS only if original project-owned binary art becomes large enough to justify it; do not use LFS as permission to store shipped game assets.
+- Store test screenshots selectively and strip sensitive/local paths if retained.
+- Do not commit saves; record their local names and corresponding commit in the test matrix.
+
+#### Recovery
+
+Before each deployed test:
+
+1. ensure the repository working tree is understood;
+2. commit or explicitly retain intentional work-in-progress;
+3. deploy from a recorded commit;
+4. generate a file/hash manifest;
+5. use a fresh, clearly named test save;
+6. record results;
+7. remove only the exact deployed campaign folder if rollback is needed;
+8. redeploy the last tagged known-good commit.
+
+No backup of original game files is required if the project never modifies them. Steam/game verification remains a last-resort repair tool, not part of normal iteration.
+
+### 13. Milestones and gates
+
+| Milestone | Exit gate |
+| --- | --- |
+| A — Discovery | User campaign appears, free event renders, trivial mission launches, no original files changed. |
+| B — Persistence | Selected force, loss, damage, ammunition, points, cap, repair/rearm, and save/reload verified across two nodes. |
+| C — Architecture | Stable ten-mission/node ledger, narrative bible, roster tiers, logistics cadence, and economy worksheet reviewed. |
+| D — Mission 1 vertical slice | Cuba convoy scenario playable end-to-end with political ROE, both result paths, persistence, and acceptable detection timing. |
+| E — Escalation systems | Optional/variable consequence, Article 5 transition, NATO unlock, and debrief ordering verified. |
+| F — Aviation | Land-based squadron selection/basing/loss persistence verified. |
+| G — Carrier | Complete carrier package affordable at intended stage; generation, sorties, recovery, persistence, and performance pass. |
+| H — Ten missions alpha | Every mission loads and has functional primary victory/defeat with placeholder-complete narrative. |
+| I — Campaign beta | Main/all-optional routes complete on Moderate; economy and continuity defects resolved. |
+| J — Release candidate | Three difficulties, save/reload matrix, static validator, packaging, licensing review, and clean-install deployment pass. |
+
+Do not advance a milestone because prose or scenario content is extensive; advance only when its exit gate has evidence.
+
+### 14. Recommended structural template
+
+Use **Pacific Strike Task Force** as the primary structural template:
+
+`Sea Power_Data\StreamingAssets\original\campaigns\pacific-strike-task-force`
+
+It most closely matches every essential requirement: player force selection, computed point costs, a growing cap, persistent losses and stores, repair/rearm gating, rewarded units, loadout unlocks, detached missions, escalating aircraft access, interleaved news/documents, and a save-dependent ending.
+
+Use two secondary references rather than forcing Pacific Strike to answer everything:
+
+- `linear-campaign-proto-1` for full left/right XAML briefing panes, `OnCompleteEvent`, and alternative topology examples;
+- `strike-group-molniya-campaign`, especially Operation Shadow, for compact narrative pacing, mid-mission tasking changes, and the closest stock Article 5 story mechanism.
+
+The new campaign should copy neither campaign wholesale. It should reproduce the proven field relationships in newly authored files, reduce Pacific Strike's 31-node complexity to the nodes our ten missions actually require, and substitute explicit reviewed 1982 rosters.
+
+### 15. Final reconnaissance conclusion
+
+All eight requested analysis stages are complete. The current game provides a workable framework for the proposed alternate-history campaign without modifying engine code or original content. The major creative limitation is national unit coverage, not campaign architecture: a US-led playable response with controlled NATO and relagged stand-ins is the most practical design.
+
+The correct first implementation task in a future authorized build session is **Milestone A's disposable campaign-discovery smoke test**, not Mission 1. That test should create only original temporary user content, prove the deployment contract, and be removed or replaced after its findings are recorded.
+
+No campaign or mission content has been created during reconnaissance.
