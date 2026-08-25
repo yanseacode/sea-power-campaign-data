@@ -1327,3 +1327,238 @@ Pacific Strike grows from a small 400/500/650-point force into a maximum authore
 It remains the recommended economic and structural template. For our campaign, the essential adaptation will be to authorize a carrier and its air wing only at the intended NATO-escalation point, then size that mission's cap increase against the current cached cost of the complete package—not just the carrier hull.
 
 Stage 5 is complete. Narrative implementation remains reserved for Stage 6.
+
+## Stage 6 — Narrative system
+
+### 1. Narrative is implemented in three layers
+
+Sea Power does not have one monolithic campaign script or debrief file. The stock campaigns divide narrative between:
+
+1. **Campaign timeline nodes** in `campaign.ini`: mission tiles, short introductions, logistics warnings, unlock notices, and standalone between-mission events.
+2. **External XML/XAML presentation files**: newspapers, orders, intelligence reports, slideshows, maps, and dynamic campaign scoreboards.
+3. **Mission-local language strings plus triggers** in each scenario INI: initial orders, tasking changes, warnings, objectives, victory messages, and defeat messages.
+
+This division is important for authoring. A newspaper shown between operations is a campaign node; a commander message received after identifying a contact is a mission trigger action; a mission-selection synopsis is a campaign-node field; and a full two-pane briefing is an optional scenario-level XML facility.
+
+### 2. Campaign selection text and pre-mission story
+
+A playable `Type=Mission` node in Pacific Strike combines its scenario reference and progression rules with localized presentation fields. Mission 03B at `Sea Power_Data\StreamingAssets\original\campaigns\pacific-strike-task-force\campaign.ini:552-599` is a particularly complete example:
+
+```ini
+[Mission10]
+Type=Mission
+MissionFile=campaigns/pacific-strike-task-force/missions/03B Holding the Lombok Strait.ini
+RequiredResult=CostlyVictory
+Parents=8
+
+Name_en=HOLDING THE LOMBOK STRAIT
+MissionSequenceName_en=SIDE MISSION
+MapShortName_en=03B
+Description_en=Bali, Indonesia (Optional)
+MissionImage_en=campaigns/pacific-strike-task-force/art/pacific_strike_03b_sheet.png
+MissionIntro_en=OPTIONAL: Heavy enemy attacks ...
+MissionResupplyRules_en=The ship selected ... will be fully rearmed ...
+MissionSpecialNote_en=Note: this is an optional challenge mission ...
+```
+
+These fields have distinct UI jobs:
+
+| Field | Purpose |
+| --- | --- |
+| `Name_<language>` | Displayed operation title. |
+| `MissionSequenceName_<language>` | Main/side mission sequence label. |
+| `MapShortName_<language>` | Compact campaign-map identifier. |
+| `Description_<language>` | Short tile/location summary. |
+| `MissionImage_<language>` | Mission sheet/tile illustration. |
+| `MissionIntro_<language>` | Longer pre-launch operational situation and task. |
+| `MissionResupplyRules_<language>` | Player-facing logistics/persistence warning. |
+| `TaskForceModeBuilderSituation_<language>` | Context shown around force availability/reinforcement limits. |
+| `MissionSpecialNote_<language>` | Highlighted exception such as detached force or unit limit. |
+| `MissionSpecialNoteHighlightColor` | Presentation color for the special note. |
+| `MissionWarningPopup_<language>` | Pipe-delimited confirmation shown for a deployment warning. |
+
+Pacific Strike relies heavily on this campaign-facing briefing layer and on generated briefing-map symbols. Its scenario files do not use the older external `MissionBriefingLeftPane`/`RightPane` fields.
+
+### 3. Full scenario briefing panes
+
+The older `linear-campaign-proto-1` campaign demonstrates an additional, still-authored briefing system. `missions\01 Operation Shadow.ini:2-9` includes, per language:
+
+```ini
+[Language_en]
+Name=01 Operation Shadow
+Description=Soviet naval activity ...
+MissionBriefingAssetsDirectory=campaigns\linear-campaign-proto-1\missions\01 Operation Shadow_Briefing
+MissionBriefingLeftPane=...\BriefingText_en.xml
+MissionBriefingRightPane=...\BriefingMap_en.xml
+```
+
+`BriefingText_en.xml` is a XAML `Grid` containing the formatted orders; `BriefingMap_en.xml` is a XAML `Viewbox`/`Canvas` containing maps, photographs, NTDS-style symbols, labels, and arrows. Images are resolved through bindings such as `{Binding Assets[Arctic_KirkenesNorth_Close]}` against the assets directory.
+
+The mission editor UI confirms that the left pane is intended for mission briefing text, the right pane for the map, and “Expert Mode” accepts XAML (`Sea Power_Data\StreamingAssets\original\language_en\ui.ini:1324-1330`). Briefing-map content can also be generated from scenario map drawings; `VisibleIn=BriefingMap` controls which authored symbols appear there.
+
+Therefore two briefing approaches coexist:
+
+- **Pacific Strike/task-force approach:** campaign-node `MissionIntro`, image, special/logistics text, scenario start popup, and scenario map symbols.
+- **Prototype/hand-authored approach:** external left/right XAML briefing panes plus the scenario start popup.
+
+The external panes are optional in the sense that Pacific Strike missions function without them. For our campaign, the Pacific Strike approach is the lower-risk baseline; full two-pane XAML briefings can be added selectively where a detailed operations order materially helps.
+
+### 4. Newspapers and between-mission events
+
+Pacific Strike implements newspapers, intelligence reports, logistics advisories, slideshows, and its final combat record as `Type=FreeEvent` nodes in the same numbered `[MissionN]` timeline as playable scenarios. For example, `campaign.ini:157-168` contains:
+
+```ini
+[Mission2]
+Type=FreeEvent
+IsUnlocked=False
+IsComplete=False
+Parents=1
+
+Name_en=Breaking News\n26 June 1985
+Description_en=Soviets strike! War in Europe and the Pacific!
+AssetsPath_en=campaigns/pacific-strike-task-force/art
+FilePath_en=campaigns/pacific-strike-task-force/art/19850626_breakingnews_event.xml
+TileImagePath_en=campaigns/pacific-strike-task-force/art/bkg_tile_newspaper.png
+```
+
+The operational contract is:
+
+- `Type=FreeEvent` tells the campaign to open authored presentation content rather than launch a scenario.
+- `Parents` places the event in progression exactly like a mission node.
+- `Name` and `Description` provide campaign-map/tile copy.
+- `FilePath` points to the XML/XAML document to render.
+- `AssetsPath` establishes the image-resource folder used by `{Binding Assets[...]}`.
+- `TileImagePath` provides the campaign-map tile appearance and is commonly either a newspaper or message background.
+- `UseAuthoredNavigation=True` is used on multi-page authored sequences such as the opening slideshow and final combat-record sequence; XML buttons call `OpenFileCommand` with the next/previous XML path.
+
+Although the parser recognizes a `NewspaperEvent` node type (confirmed during Stage 2), current stock authored campaigns mainly use `FreeEvent` for newspaper content. Newspaper identity is therefore primarily conveyed by its XAML layout and tile art, not by requiring a special newspaper node type.
+
+#### Newspaper example
+
+`art\19850626_newspaper_event.xml` explicitly calls itself the standard linear-campaign newspaper setup. It uses a WPF-style `Page`, `Viewbox`, newsprint `Border`, columns and rows, `TextBlock` headlines/body copy, and bound images. Its header comment instructs translators to create language-specific XML and link those paths from `campaign.ini`.
+
+#### Military-document example
+
+`art\19850709_jcs_sitrep_palawan.xml` is a scrollable JCS message. It uses a paper image brush, monospaced text, message-routing fields, classification markings, and numbered narrative paragraphs. The campaign node at `campaign.ini:463-473` attaches it as another `FreeEvent`; no special “document” type is required.
+
+#### Slideshow and dynamic ending
+
+`art\s01_window_1.xml` implements page 1 of a seven-page introduction. Its next button binds `OpenFileCommand` to `s01_window_2.xml`. The final `event_task_force_77_combat_record.xml` goes further: it binds live persistent data such as task-force name, sink counts, surviving surface units, squadrons, proficiency, and battle stars. Thus free-event XAML is capable of both static story presentation and a save-dependent campaign epilogue.
+
+### 5. Mission start messages and in-mission narrative
+
+Scenario narrative strings live inside localized `[Language_<code>]` sections. The key name is arbitrary but must match the trigger action that references it. In `missions\02 Action in the Taiwan Strait.ini:18`, `Taskforce1StartMessage` is a structured intro popup. Trigger 1 fires it after five seconds:
+
+```ini
+[Trigger1]
+Condition_Condition1_Type=Time
+Condition_Condition1_Time=5
+ConditionsCompleted=<Condition1>
+Action_Taskforce1_Message=Taskforce1StartMessage
+```
+
+Current files demonstrate two compatible message encodings:
+
+1. **Legacy compact encoding:** `Title|Body|Button text`, with `\n` line breaks and supported rich-text tags such as `<size=20>`.
+2. **Rich key/value encoding:** embedded fields such as `From=`, `To=`, `Subj=`, `Precedence=`, `Classification=`, `Template=`, `Body=`, `ButtonText=`, `PopupStyle=`, and optional `MessageRole=`.
+
+The Taiwan Strait example uses:
+
+```ini
+Taskforce1Landingforcedestroyed-playervictoryMessage=
+From=CTF 77
+To={TaskForceName}
+Subj=RECON REPORT-MISSION ACCOMPLISHED
+Precedence=Immediate
+Classification=Secret
+Template=USAUSNavy
+Body=...
+ButtonText=Continue playing
+PopupStyle=NavalMessage
+MessageRole=Outro
+```
+
+The files support runtime substitutions including `{TaskForceName}` and `{FlagshipName}`. `PopupStyle=Intro`, `Outro`, and `NavalMessage` select presentation. `MessageRole=Outro` explicitly marks rich victory/defeat traffic as result-oriented presentation. Ordinary warnings omit the outro role and allow play to continue.
+
+Triggers may also update the intelligence/tasking panel without a popup through `Action_Taskforce1_Intel=<localized key>`. Operation Shadow demonstrates a mid-mission political escalation: a triggered message announces that the ship seizure has invoked Article 5, while the paired intel text and objective actions change the player's tasking. This is directly relevant to our planned NATO escalation, although the campaign-level unit unlock must remain a campaign progression reward rather than merely narrative text.
+
+### 6. Objectives, victory/defeat text, and debrief behavior
+
+Objectives have two linked definitions:
+
+1. A localized label such as `Objective_DestroyInvasionForce=Destroy PLA landing force...` in `[Language_en]`.
+2. A mechanical row under `[Taskforce1_Objectives]`, for example `DestroyInvasionForce=50,-50,Complete,Main`.
+
+Triggers then change objective and mission state. The Taiwan Strait victory trigger at lines 653-660 sends the victory message, declares `Action_Victory=Taskforce1`, and completes both objectives. Its defeat trigger sends a different message, declares Taskforce 2 victorious, fails the main objective, cancels the survival objective, and ends the mission.
+
+There is no separate universal prose `[Debriefing]` section in these examples. What the player experiences as mission-result/debrief narrative is assembled from:
+
+- the trigger-selected victory or defeat popup;
+- objective completion/failure/cancellation state;
+- the scenario's declared victorious task force and resulting score category;
+- campaign progression checking `RequiredResult`;
+- optional task-force debrief notices authored on the campaign node;
+- any subsequently unlocked newspaper/document `FreeEvent` node.
+
+This permits different defeat causes to have different text. Taiwan Strait distinguishes loss of the flagship from the invasion force reaching Dongyin. Operation Shadow distinguishes destruction of the player submarines from accidental destruction of the protected US auxiliary. Each terminal trigger references its own localized message key.
+
+`TaskForceModeDebriefNoticeTitle_<language>` and `TaskForceModeDebriefNoticeText_<language>` are campaign-specific post-result notices rather than the scenario's dramatic victory prose. Pacific Strike uses them after Mission 03B to announce enhanced loadouts (`campaign.ini:598-599`) and after Mission 04 to announce air-wing operations (`campaign.ini:708-709`).
+
+### 7. Localization and fallback considerations
+
+Campaign nodes suffix presentation fields with language codes (`_en`, `_de`, `_ru`, `_ja`, and others). Scenario files instead repeat the same unsuffixed keys inside `[Language_en]`, `[Language_de]`, etc. External XML content generally has one file per language, and `campaign.ini` or the scenario language section points to the appropriate file.
+
+Stock content is not perfectly uniform: some languages reuse an English XML, some localized fields are absent, and legacy messages use pipe encoding while newer English messages use rich key/value encoding. For a new campaign, English should be complete and self-contained first. Other languages should not be declared until their referenced files and strings exist; invented partial localization creates more failure modes than relying on verified fallback behavior.
+
+### 8. Mandatory, optional, and inferred narrative fields
+
+#### Confirmed necessary for a narrative node intended to render
+
+- A numbered `[MissionN]` entry included in `NumberOfMissions`.
+- `Type=FreeEvent` for an external story/document node.
+- Valid progression state (`IsUnlocked`, `IsComplete`, and normally `Parents`, except an initially unlocked root).
+- A valid `FilePath_<language>` to render authored content.
+- A matching `AssetsPath_<language>` whenever the XML uses bound assets.
+
+#### Confirmed necessary for trigger-driven scenario text
+
+- A localized message key in the active language section.
+- An `Action_TaskforceN_Message` referencing that exact key.
+- A reachable trigger with valid conditions.
+- For localized objective display, an `Objective_<id>` label matching the objective ID in `[TaskforceN_Objectives]`.
+
+#### Optional/presentation fields
+
+- Campaign `Name`, `Description`, `TileImagePath`, and custom mission images improve timeline presentation.
+- `MissionIntro`, logistics rules, builder situation, special note, warning popup, and debrief notice fields apply only when the associated UI feature is wanted.
+- Scenario `MissionBriefingAssetsDirectory` and left/right pane XML are optional; Pacific Strike does not use them.
+- `UseAuthoredNavigation` is needed for custom multi-page navigation, not ordinary single-page events.
+- Rich message metadata such as routing, precedence, classification, template, popup style, and role is optional relative to a legacy `Title|Body|Button` message.
+
+#### Strong inference / runtime check still warranted
+
+- English fallback behavior exists in parts of the parser, but the exact fallback order for every campaign field and missing external XML path should be tested.
+- The precise moment a task-force debrief notice appears relative to reward application and the newly unlocked `FreeEvent` should be verified in one clean run.
+- Custom XAML supports extensive WPF-like controls and game data bindings, but arbitrary control/binding availability is constrained by the game's loader; new layouts should begin from a proven stock template.
+
+### 9. Narrative architecture recommended for the Falklands campaign
+
+The proven low-risk pattern is:
+
+- one opening authored-navigation slideshow establishing the Argentine-Soviet pact and US political dilemma;
+- `FreeEvent` newspaper pages for major public geopolitical changes;
+- JCS, State Department, CIA, NATO, and naval-message documents for classified between-mission developments;
+- concise campaign-node `MissionIntro`, resupply rules, and special notes on every operation;
+- a scenario start message for immediate tactical orders;
+- trigger-driven warnings and tasking changes during the mission;
+- separate victory and each materially different defeat message;
+- debrief notices only for mechanical unlocks such as new NATO availability or loadout tiers;
+- a final dynamic or static campaign record/epilogue.
+
+For Article 5 specifically, Operation Shadow provides a strong story model: a mid-mission incident can announce the political threshold through a triggered message and new tasking, followed by a campaign-node news/JCS event and actual NATO roster unlock in progression data after mission completion.
+
+### 10. Stage 6 conclusion
+
+Pacific Strike remains the best primary narrative template because it demonstrates an integrated timeline of missions, newspapers, intelligence documents, logistics advisories, unlock notices, an authored slideshow, and a persistent-data ending. `linear-campaign-proto-1` should be retained as the secondary template for optional two-pane XAML briefings and for Operation Shadow's Article 5 tasking-change example.
+
+Stage 6 is complete. Risks, confidence levels, and runtime-test unknowns remain reserved for Stage 7.
