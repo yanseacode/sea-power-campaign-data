@@ -1053,6 +1053,8 @@ LoadoutCost_<LoadoutReference>=...
 
 but none are active in the present stock database. The `|points_cost` notation in comments around the Pacific Strike roster is not an operative source of its displayed stock prices.
 
+Override precedence is exact: when the resolved base-unit INI contains a positive `TaskForceCost`, the runtime treats it as hand-authored and multiplies it by `HandAuthoredScaleBridge=10.0`, then rounds to the stored/displayed integer cost. Positive `LoadoutCost_<LoadoutReference>` values use the same scale bridge. If no positive override exists, automatic valuation supplies the base and loadout values. Loadout upgrades in the automatic model are represented relative to the unit's cheapest/base loadout. `AI\UnitCostValue` is unrelated—it is an AI target-priority value, not a Task Force Builder price.
+
 Automatic valuation considers role/capability, weapons, sensors, range, survivability, stealth/mobility, aviation hosting, and loadout content. Exact displayed values are build-dependent runtime results. Stage 5 will analyze the current campaign economy and observed/derived prices; Stage 4 establishes that cost is a property of the resolved base platform/loadout, not its nationality label or individual hull paint scheme unless an override changes its equipment/loadout.
 
 ### 9. Land-unit representation
@@ -1190,6 +1192,54 @@ Points and cap are different resources:
 - completion cap points increase the maximum fielded force value and are not multiplied in the authored data;
 - repair, replacement, loadout, and dismissal/refund rules can change the actual balance available at any moment;
 - automatically granted units can raise the cap by their value, as the current UI explicitly states in `Sea Power_Data\StreamingAssets\original\language_en\ui.ini:3071`.
+
+#### Reward application and duplicate protection
+
+The verified completion path normalizes authored values to non-negative numbers, applies the selected difficulty's `CompletionPointRewardMultiplier` to spendable completion points, rounds the result, and adds the authored cap increase without applying that multiplier:
+
+```text
+completion_reward = round(max(0, authored_completion_points) * difficulty_multiplier)
+cap_increase      = max(0, authored_completion_cap_points)
+available_points += completion_reward
+cap_points       += cap_increase
+```
+
+The completion routine does not clamp `available_points` down to `cap_points`; cap limits the value of purchases/fielded force rather than every source of saved currency. Post-mission state records `CompletionRewardsApplied=True` and `CompletionPointRewardApplied=<value>` so reopening a debrief does not award the same completion reward twice.
+
+#### CSAR reward
+
+Pacific Strike sets `CSARPointModifier=10` at `campaign.ini:43`. The runtime applies survivor rescue points after the normal completion reward:
+
+```text
+if CSARPointModifier > 0:
+    csar_points = floor(max(0, survivors_rescued) / CSARPointModifier)
+else:
+    csar_points = 0
+```
+
+The implementation returns zero rather than divide when the configured modifier is zero or negative. With a valid modifier of 10, 0–9 survivors yield 0 points, 10–19 yield 1, and 224 yield 22. CSAR points increase available currency but not force cap and do not receive the mission difficulty multiplier. Saved post-mission fields include `SurvivorsRescued`, `CSARPointModifier`, `CSARPointsAwarded`, and `CSARPointRewardApplied`; duplicate protection prevents the same rescue reward being applied twice. The inspected Pacific Strike save contains multiple matching examples, including 16 survivors → 1, 120 → 12, 224 → 22, and 536 → 53.
+
+#### Repair and refund economy
+
+Pacific Strike's base rules at `campaign.ini:58-64` authorize repair only for `Light` and `Moderate` damage, disallow `Heavy`, and price authorized repairs as fractions of unit value:
+
+```ini
+UnitDecommissionPointReturnModifier=0.25
+UnitDismissPointReturnModifier=0.5
+DamageToAllowRepair=Light,Moderate
+DamageToDisallowRepair=Heavy
+RepairPointsCost=Light,0.1|Moderate,0.25
+```
+
+Thus base Light repair costs 10% and Moderate repair 25% before the difficulty repair modifier. Difficulty also changes refund generosity:
+
+| Difficulty | Repair multiplier | Decommission return | Dismiss return |
+| --- | ---: | ---: | ---: |
+| Easy | 0.75 | 0.35 | 0.65 |
+| Moderate | 1.00 | 0.25 | 0.50 |
+| Difficult | 1.25 | 0.15 | 0.35 |
+
+Decommission and dismiss are distinct runtime actions and use their separately authored return modifiers. The precise UI handling of rewarded, damaged, and upgraded units remains correctly listed as a Stage 7 runtime edge-case test.
 
 ### 2. Mission-by-mission authored progression
 
