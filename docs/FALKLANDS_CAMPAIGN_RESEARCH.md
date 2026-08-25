@@ -1562,3 +1562,180 @@ For Article 5 specifically, Operation Shadow provides a strong story model: a mi
 Pacific Strike remains the best primary narrative template because it demonstrates an integrated timeline of missions, newspapers, intelligence documents, logistics advisories, unlock notices, an authored slideshow, and a persistent-data ending. `linear-campaign-proto-1` should be retained as the secondary template for optional two-pane XAML briefings and for Operation Shadow's Article 5 tasking-change example.
 
 Stage 6 is complete. Risks, confidence levels, and runtime-test unknowns remain reserved for Stage 7.
+
+## Stage 7 — Risks and unknowns
+
+### 1. Confidence standard
+
+This section separates three evidence levels:
+
+- **Confirmed:** directly present in current authored files, current generated caches/saves, or inspected current managed implementation.
+- **Strong inference:** multiple independent files or code paths support the conclusion, but the exact behavior has not been observed in a clean purpose-built run.
+- **Unknown/runtime test required:** static inspection cannot establish timing, UI behavior, balance, AI response, or an unsupported edge case with sufficient confidence.
+
+“Confirmed” describes this installed build. Sea Power is under active development, so formula versions, parsers, editor output, and supported fields may change in later builds.
+
+### 2. Confirmed campaign behavior
+
+The following are sufficiently established for planning and do not need to be rediscovered before authoring a skeleton:
+
+1. Linear campaigns are numbered event timelines. `[Missions] NumberOfMissions` covers both tactical missions and narrative events.
+2. `Type=Mission` launches a scenario through `MissionFile`; `Type=FreeEvent` renders external XML/XAML content.
+3. `Parents`, initial unlock state, completion state, and `ExpiresAfterMissionComplete` provide ordered, parallel, and expiring optional nodes.
+4. Tactical progression checks `RequiredResult`; stock tactical nodes explicitly use `CostlyVictory` as the minimum passing result.
+5. No stock campaign demonstrates a dedicated “continue down a defeat branch” mechanism. Below-threshold results normally leave the node incomplete.
+6. Task-force mode maintains separate available points and force cap.
+7. Mission completion awards spendable points and cap increases separately; difficulty multiplies completion-point rewards.
+8. Mission allowlists, loadout unlocks, cap, and available points jointly control what the player can acquire and deploy.
+9. Persistent task-force saves store selected units, variants/squadrons, loadouts, quantities, costs, damage, magazines, aircraft state, experience, losses, rewards, and campaign variables.
+10. Destroyed aircraft and helicopters are recorded as persistent losses in the inspected Pacific Strike save.
+11. Repair, rearm, and builder access are independently authored per mission node.
+12. Automatically granted units can be zero-cost rewards and can raise the force cap by their own value.
+13. `Generated`, `Replaced`, and campaign-aware spawn/join mechanisms exist for injecting the persistent force into scenarios.
+14. `SpawnByVariableAND` and campaign-variable actions allow earlier outcomes to change later mission content.
+15. Objectives are mechanically defined under `[TaskforceN_Objectives]`, localized separately, and explicitly completed, failed, cancelled, hidden, or revealed by trigger actions.
+16. Victory is explicitly declared by `Action_Victory=TaskforceN`; it is not inferred solely from objective point totals.
+17. The trigger system covers time, unit loss/damage/classification, area entry, trigger state, and other conditions needed for the planned missions.
+18. Trigger actions cover messages, intel/tasking changes, spawning/enabling, objective updates, campaign variables, and mission termination.
+19. Campaign narrative can be interleaved through `FreeEvent` XML/XAML nodes, including newspapers, orders, slideshows, and save-dependent scoreboards.
+20. Mission narrative can use start messages, warnings, tasking changes, and cause-specific victory/defeat messages.
+21. User campaign content is present under `Sea Power_Data\StreamingAssets\user\campaigns`; user mission content is present under `user\missions`. `user\_info.ini` states that user data is loaded first and synchronized with Steam Cloud when available.
+22. Current point values are automatically computed and cached. The installed cache separates base, variant, and loadout values.
+23. Platform nationality is variant/squadron metadata rather than a reliable consequence of the class-name prefix alone.
+24. Britain and Argentina have severely limited 1982 unit coverage; the US and USSR have broad usable coverage.
+25. Pacific Strike is the best task-force/economy/narrative template; `linear-campaign-proto-1` and Operation Shadow are valuable secondary references.
+
+### 3. Strong inferences safe enough for design
+
+These conclusions can guide the campaign design, but should be verified during skeleton testing rather than assumed perfect:
+
+1. **Automatic user-campaign discovery.** Existing full campaigns are located beneath `StreamingAssets\user\campaigns` even though root `user\_info.ini` does not enumerate them. Directory scanning is therefore the likely discovery mechanism. A new uniquely named folder should be detected without editing original content.
+2. **Repository-to-user deployment.** The safest workflow is to keep source under the Git repository and deploy a generated/copy build into `StreamingAssets\user\campaigns\<campaign-id>`. This prevents game updates or Steam Cloud from becoming the source of truth.
+3. **Flag relabeling.** Variant/squadron nation metadata and scenario overrides can change displayed national identity without changing the underlying weapons, sensors, dates, or point value. Exact UI coverage of every flag/name surface still needs checking.
+4. **Optional-mission strategic consequences.** Persistent variables plus conditional spawn are the intended mechanism for “destroyed earlier, absent later” or altered reinforcement strength.
+5. **Low-resupply continuity.** Turning repair and rearm off should carry surviving damage and ammunition expenditure into the next relevant operation. This is supported by code, saves, and campaign text, but exact transition timing should be observed once.
+6. **Detached-force isolation.** Excluding the task force/air wing and selecting a submarine or restricted vessel subset should preserve the undeployed main force unchanged.
+7. **Article 5 escalation.** A mission trigger can narrate the event and change tactical tasking, while mission completion unlocks a subsequent `FreeEvent`, expands NATO allowlists, grants units, and/or raises cap. This combines separately confirmed mechanisms in a way not used as one complete stock sequence.
+8. **Mission 1 can remain below full war initially.** Neutral/hostile task forces, delayed classification, messages, objective changes, and trigger-driven victory support a search/interception scenario with political escalation. The exact ROE feel is still a runtime matter.
+9. **Strategic missile cargo can be abstracted.** A merchant convoy, protected arrival area, and narrative/conditional land-system consequence can represent missiles being delivered without physically embarking a deployable SAM or missile battery.
+10. **English-first localization is viable.** The parser has English fallback behavior in multiple fields, but every missing-field case has not been exercised.
+
+### 4. Unknowns requiring runtime testing
+
+#### Campaign discovery and packaging
+
+| Unknown | Why static inspection is insufficient | Minimum test |
+| --- | --- | --- |
+| Exact requirements for a new user task-force campaign to appear in the campaign UI | Existing user copies prove the path, but not the minimal registration/cache refresh behavior | Deploy a uniquely named two-node campaign under `user\campaigns`, restart the game, confirm tile/title/launch, then remove the deployed test copy. |
+| Whether `_info.ini` is required inside the campaign folder | Existing layouts are inconsistent and root `_info.ini` does not enumerate campaigns | Test with and without a campaign-local `_info.ini`; retain the smallest proven layout. |
+| Hot reload versus full restart | File scanners may cache campaign metadata | Change only the test title and determine whether menu return, editor reload, or process restart is required. |
+| Steam Cloud interaction with deployed development files | Root user data explicitly advertises synchronization | Test with a disposable marker and document whether Steam restores/deletes/duplicates it; never use the deployed folder as the only copy. |
+
+#### Progression and branching
+
+| Unknown | Why it matters | Minimum test |
+| --- | --- | --- |
+| True defeat-continuation branching | No stock campaign proves different successor nodes chosen by victory versus defeat | Build a disposable mission with below-threshold and passing outcomes; inspect node unlock state/save after each. Do not design the campaign around defeat continuation unless proven. |
+| Exact result-grade calculation around `CostlyVictory` | Objective scores and explicit victory interact with casualty/performance grading | Run controlled wins with different losses and record returned result grade and node completion. |
+| Parent semantics with multiple parents | Static topology implies prerequisites, but AND/OR behavior should be observed | Create parallel free events feeding one child and complete them separately. |
+| Expiry ordering when parent and expiry target complete together | Could affect optional-node availability | Complete the controlling mission while the optional node is unlocked and inspect/save the resulting state. |
+| `OnCompleteEvent` ordering relative to normal child unlocks | Relevant if used for a post-result vignette | Test one node containing both mechanisms. |
+
+#### Persistence, force selection, and logistics
+
+| Unknown | Why it matters | Minimum test |
+| --- | --- | --- |
+| Exact UI timing of repair/rearm/builder flags | Text says both “during” and “after” depending on node; flags are attached to mission nodes | Use a damaged, partially expended unit across alternating full/no-logistics test nodes and capture state before launch and after completion. |
+| Repair cost and duration presentation for every damage type | Static formula does not reveal practical UI behavior | Damage weapons, sensors, propulsion, and hull separately; compare repair availability/cost. |
+| Dismissal/refund behavior after damage, loadout purchases, and grants | Refund rules and zero-cost grants can create edge cases | Test purchased, damaged, and rewarded examples individually. |
+| Granted-unit cap adjustment and migration behavior in a fresh save | The inspected old save contains cap-repair/version migration fields | Start a clean save, receive a known-cost grant, and compare cap/balance before and after. |
+| Persistent state across `Generated` versus `Replaced` missions | Both are used, but not every state component has been compared | Carry one damaged ship with an embarked helicopter through one example of each. |
+| Detached mission effect on undeployed units | Strongly inferred, not directly compared in a clean controlled save | Record every unit's damage/magazines before and after a detached mission. |
+| Handling of units absent from a later mission allowlist | They should remain owned but unavailable; exact UI and later recovery need confirmation | Remove a purchased unit from one test node's allowlist, then restore it on the next. |
+
+#### Economy and carrier escalation
+
+| Unknown | Why it matters | Minimum test |
+| --- | --- | --- |
+| Exact total builder cost of a complete carrier package | Cached hull cost is not a carrier group; difficulty and air-wing inclusion alter accounting | Build the intended 1982 hull, air wing, escorts, and submarine on all three difficulties and record displayed purchase and cap values. |
+| Meaning of `ShipIncludesAirwing` for purchase, replacement, and cap accounting | Pacific Strike has no purchasable carrier example | Enable one carrier only in a disposable roster and compare identical purchases with the flag true/false. |
+| Aircraft squadron quantity/cost interaction | Cache rows are per resolved aircraft/loadout while builder buys quantities/squadrons | Purchase several quantities from the same squadron and record marginal cost. |
+| Stability of computed costs across game updates | Current formula is version 134 and build-dependent | Store a project-side cost snapshot with game build/formula version and regenerate it after updates. |
+| Cost overrides on custom variants/loadouts | Code supports positive overrides, but stock content does not exercise them | Author one disposable override and confirm cache, builder display, save, refund, and cap behavior. |
+
+#### Tactical mission behavior
+
+| Unknown | Why it matters | Minimum test |
+| --- | --- | --- |
+| Below-war ROE and neutral-contact behavior | Political interception depends on warnings and classification not feeling like immediate unrestricted war | Prototype only the sides, convoy, identification trigger, restricted objectives, and escalation transition. |
+| AI convoy navigation and formation cohesion over long routes | Static waypoints do not prove convoy behavior under evasion, damage, or escort combat | Run accelerated/no-player and combat-interruption passes; verify arrival triggers and straggler handling. |
+| Trigger reliability with dynamically inserted persistent units | Generated identifiers may differ from authored fixed identifiers | Test every trigger that references the persistent anchor, selected subset, or joined aircraft by ID/role. |
+| Aircraft basing and tasking with a player-selected air wing | Generated airbase allocation, ready slots, loadouts, and losses interact | Test land-base and carrier operations separately with launch, recovery, diversion, and aircraft loss. |
+| Carrier aviation persistence | Final missions depend on aircraft, deck state, weapons, and host survival carrying correctly | Run a two-mission carrier test including expended sorties, damaged aircraft, and host damage. |
+| Submarine detached-force selection | Optional examples exist, but our chosen roster and mission limits may expose selection issues | Test one owned boat, multiple owned boats, and no eligible boat. |
+| Land-object damage and conditional survival | Later missile-site consequences may depend on installations persisting or respawning | Destroy and partially damage fixed installations, then inspect variables and later conditional spawns. |
+| Search-area balance and detection timing | Sensors, weather, geometry, AI emissions, and player force choice dominate actual difficulty | Run multiple force compositions and seeded/random spawn positions; measure first detection and intercept margin. |
+| Performance at late-campaign force scale | A full carrier group plus Soviet/NATO/Argentine stand-ins may stress simulation and UI | Establish unit/aircraft budgets, then profile worst-case launch waves and trigger counts. |
+
+#### Narrative and UI
+
+| Unknown | Why it matters | Minimum test |
+| --- | --- | --- |
+| Fallback order for every missing localized campaign field | Partial stock localization is inconsistent | Run an English-only test while selecting another UI language and record each UI surface. |
+| Loader support for novel XAML controls/bindings | Stock templates prove only the controls and bindings they use | Clone a proven template and add one new construct at a time; check logs on failure. |
+| Debrief-notice ordering | Mechanical unlock messaging must match when the unlock is actually usable | Complete a node that grants points, cap, units, and loadouts and observe the full UI sequence. |
+| Rich-message versus legacy-message parsing edge cases | Both encodings exist, but delimiter/newline/rich-text interactions can break content | Test commas, pipes, braces, apostrophes, rich tags, long body text, and substitutions. |
+| Dynamic scoreboard bindings available to custom campaigns | Pacific Strike's scoreboard uses specialized data-source properties | First reuse only bindings proven in its stock scoreboard, then confirm custom campaign data populates them. |
+
+### 5. Historical and database risks
+
+1. **Sparse British and Argentine coverage.** Stand-ins are unavoidable. Every substitute must be documented by represented role, not merely appearance.
+2. **Flag accuracy versus capability accuracy.** Relagging a US destroyer as British or a Soviet platform as Argentine can improve visual storytelling while producing historically alien sensors, missiles, endurance, aviation, or damage tolerance.
+3. **Undated metadata.** Many land units, radars, SAMs, bases, and ports omit service dates. “Undated” must never be interpreted automatically as valid for 1982.
+4. **Fit-specific service windows.** A class may be historically present while the represented in-game variant is not. Nimitz and F/A-18A are known examples requiring care.
+5. **Squadron nationality/date mismatch.** Aircraft class availability does not prove that a usable nation-appropriate squadron and 1982 loadout exist.
+6. **Carrier package coherence.** Hull, embarked types, squadron identities, loadouts, helicopter support, and escort doctrine must be reviewed as a package.
+7. **Argentine Soviet stand-ins can overstate capability.** Soviet missile ships, submarines, SAMs, or aircraft may be much more capable than the Argentine role they represent. Loadout/variant choice and force quantity must compensate.
+8. **No exact strategic cargo object selected.** The Cuban missile cargo may need to remain narrative/trigger abstraction rather than a physically embarked deployable system.
+9. **Geographic fidelity is untested.** Cuba and the South Atlantic need coordinate, coastline, airfield, port, weather, and sensor-horizon checks in the actual scenario renderer.
+
+### 6. Technical and maintenance risks
+
+1. **Active-development drift:** parser keys, point formula, cache format, mission editor output, and persistence migrations may change after a game update.
+2. **Original-file overwrite risk:** no project source should live under `StreamingAssets\original`; updates can replace it and distributing modified originals is undesirable.
+3. **Steam Cloud risk:** `StreamingAssets\user` is synchronized when available. Repository source and deployed game copy must remain separate.
+4. **Save incompatibility during iteration:** changing mission numbering, IDs, roster references, or persistence rules can invalidate development saves. Test saves should be disposable and tagged with the matching commit/build.
+5. **Identifier fragility:** unit section names, trigger keys, objective IDs, and campaign-variable names are string-linked. Typos often fail only at load or runtime.
+6. **Case/path/separator inconsistencies:** stock files use both slashes and backslashes and language-specific paths. New content should choose one proven convention and validate every referenced file.
+7. **XAML failure surface:** malformed markup or unsupported bindings can break a narrative event independently of campaign logic.
+8. **No supported arbitrary per-mission JavaScript hook found:** design must remain within documented INI triggers/actions unless a later supported mechanism is proven.
+9. **Generated-content complexity:** task-force insertion and aircraft basing add indirection; fixed scenario IDs cannot always be assumed for selected units.
+10. **Performance and balance are emergent:** static inspection cannot predict detection, AI decisions, missile expenditure, sortie tempo, or acceptable late-campaign unit counts.
+11. **Redistribution boundary:** the private repository currently contains only authored documentation. Original game files should remain local reference material. Future mod files should be authored/project-owned or minimally adapted only where the game's mod terms clearly permit redistribution.
+
+### 7. Runtime test order
+
+The unknowns should be retired in dependency order rather than during full mission construction:
+
+1. Campaign discovery and minimum user-folder skeleton.
+2. One free-event node and one trivial mission node.
+3. Pass/fail result progression and save creation.
+4. Parent, optional, expiry, and persistent-variable behavior.
+5. Persistent selected ship through full-logistics and no-logistics nodes.
+6. Detached/subset mission behavior.
+7. Granted unit, cap increase, reward, loadout unlock, and debrief ordering.
+8. Nation/flag override across campaign tile, builder, mission UI, map contact, and debrief/save.
+9. Aircraft squadron and land-airbase persistence.
+10. Carrier hull/air-wing accounting and carrier aviation persistence.
+11. Narrative XAML, localization fallback, and dynamic scoreboard.
+12. Only then, Mission 1's political ROE, convoy AI, detection geometry, and arrival/victory triggers.
+
+Each test should begin from a fresh save, record the game build and point-formula version, and preserve before/after save snapshots outside the deployed mod folder.
+
+### 8. Stage 7 conclusion
+
+Static reconnaissance is sufficient to design and build the campaign without inventing a new framework. The principal formats, progression model, persistence data, economy, trigger system, unit references, and narrative mechanisms are confirmed.
+
+The remaining uncertainty is concentrated in runtime integration and balance, not basic architecture. None of the unknowns prevents creation of a minimal campaign skeleton, but several—especially user-campaign discovery, result progression, logistics timing, persistent generated-unit IDs, carrier accounting, and political ROE—must be resolved before committing to ten finished missions.
+
+Stage 7 is complete. The staged implementation, testing, deployment, and version-control plan remain reserved for Stage 8.
