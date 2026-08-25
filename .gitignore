@@ -1,0 +1,47 @@
+# Never track the installed game or copied proprietary assets.
+Sea Power.exe
+Sea Power_Data/
+MonoBleedingEdge/
+D3D12/
+*.dll
+*.exe
+*.pdb
+*.assets
+*.resource
+*.bundle
+
+# Runtime and user data.
+saves/
+cache/
+logs/
+screenshots/
+crashes/
+
+# Local extraction, reverse engineering, and package artifacts.
+decompiled/
+dnspy/
+extracted/
+vendor/
+dist/
+build/
+*.zip
+*.7z
+*.rar
+*.msi
+
+# Editor and operating-system files.
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files.
+*.tmp
+*.bak
+*.log
+~*
+
