@@ -1,0 +1,75 @@
+# Campaign Economy Ledger
+
+## Status
+
+Campaign-specific values remain TBD until the Mission 1 roster is reviewed. Runtime laboratory values will be recorded as evidence, not silently promoted into campaign balance decisions.
+
+## Global assumptions
+
+| Item | Pacific Strike reference | Falklands campaign |
+| --- | --- | --- |
+| Starting points | Easy 650; Moderate 500; Difficult 400 | TBD |
+| Starting force cap | Easy 650; Moderate 500; Difficult 400 | TBD |
+| Completion point multiplier | Easy 1.75; Moderate 1.50; Difficult 1.25 | TBD |
+| Repair multiplier | Easy 0.75; Moderate 1.00; Difficult 1.25 | TBD |
+| Decommission refund | Easy 0.35; Moderate 0.25; Difficult 0.15 | TBD |
+| Dismiss refund | Easy 0.65; Moderate 0.50; Difficult 0.35 | TBD |
+| Repair eligibility/cost | Light 10%, Moderate 25%, Heavy disallowed before difficulty multiplier | TBD |
+| Ship air wing included | Easy/Moderate true; Difficult false | TBD |
+| Point formula/build | Formula 134; game 0.8.2 Build #363 (23607) | Re-measure on implementation build |
+
+Reference mechanics: completion points are spendable currency and receive the difficulty multiplier; completion cap points increase deployment cap without that multiplier. Builder availability and mission allowlists are separate gates. Granted units may be zero-cost and may increase cap by their value; this requires a fresh-save runtime check.
+
+## Mission economy table
+
+| Mission | Starting cap | Starting spendable points | Minimum viable force | Comfortable force | Aspirational force | Completion points | Cap increase | Resupply status | Notes |
+| ---: | ---: | ---: | --- | --- | --- | ---: | ---: | --- | --- |
+| 1 | TBD | TBD | TBD after roster selection | TBD | TBD | TBD | TBD | TBD | No carrier |
+| 2 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
+| 3 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
+| 4 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
+| 5 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
+| 6 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
+| 7 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
+| 8 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
+| 9 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
+| 10 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | Full carrier task force should be viable |
+
+## Carrier target
+
+Measure the complete package on each supported difficulty; hull cost alone is not an affordability target.
+
+| Component | Selected reference | Quantity/loadout | Measured cost | Status |
+| --- | --- | --- | ---: | --- |
+| Carrier hull | TBD | TBD | TBD | Candidate fits: `usn_cv_america_79` or `usn_cv_forrestal_75` |
+| Carrier air wing | TBD | TBD | TBD | Include fighter, strike, AEW, ASW, EW, and helicopter needs as selected |
+| AAW escorts | TBD | TBD | TBD | |
+| ASW escorts | TBD | TBD | TBD | |
+| Submarine | TBD | TBD | TBD | |
+| Support/logistics | TBD | TBD | TBD | |
+| Desired optional margin | N/A | N/A | TBD | Optional content should add flexibility, not gate viability |
+
+## Point-cost snapshot
+
+- Game version: 0.8.2 Build #363 (23607), dated 2026-08-04 in the installed changelog.
+- Point formula version: 134, as established by current research/decompiled implementation.
+- Extraction date: 2026-08-25.
+- Source: local generated point cache; cache itself is not committed.
+- Scope: selected campaign candidates only. Values below are base-platform or specifically named loadout rows where stated; they are not complete task-force package prices.
+
+| Relevant candidate | Cache resolution | Cost | Qualification |
+| --- | --- | ---: | --- |
+| Knox-class frigate | Base platform | 95 | Exact 1982 hull/loadout pending |
+| Skipjack-class SSN | Base platform | 205 | Exact 1982 hull pending |
+| Tarawa-class LHA | Base platform | 222 | Campaign-node logistics remain separate |
+| Forrestal represented fit | Base platform | 284 | Air wing and escorts excluded |
+| Kara-class cruiser | Base platform | 276 | Exact 1982 hull pending |
+| F-14A | Base platform | 193 | Squadron/quantity/loadout pending |
+| A-6E | `Combined@1982` | 90 | Exact squadron pending |
+| S-3A | `Combined@1982` | 78 | Exact squadron pending |
+| E-2C | Base platform | 148 | Exact squadron/loadout pending |
+| Slava-class cruiser | Base platform | 857 | Only one represented reference begins in 1982 |
+| Kirov-class battlecruiser | Base platform | 1108 | Late threat candidate only |
+
+Regenerate this table after any game build or formula-version change.
+
