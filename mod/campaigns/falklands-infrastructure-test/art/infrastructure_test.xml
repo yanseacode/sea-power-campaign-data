@@ -1,0 +1,30 @@
+<Page
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  mc:Ignorable="d"
+  d:DesignWidth="1920"
+  d:DesignHeight="1080">
+  <Viewbox>
+    <Border Background="MidnightBlue" BorderBrush="White" BorderThickness="4" Padding="60" Width="1400" Height="700">
+      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock
+          Foreground="White"
+          FontSize="54"
+          FontWeight="Bold"
+          TextAlignment="Center"
+          TextWrapping="Wrap"
+          Text="Falklands Campaign Infrastructure Test — FreeEvent Loaded Successfully" />
+        <TextBlock
+          Foreground="LightGray"
+          FontSize="28"
+          Margin="0,40,0,0"
+          TextAlignment="Center"
+          TextWrapping="Wrap"
+          Text="Disposable Milestone A content. Continue to the trivial tactical mission." />
+      </StackPanel>
+    </Border>
+  </Viewbox>
+</Page>
+
