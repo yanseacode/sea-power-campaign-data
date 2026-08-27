@@ -12,7 +12,7 @@
 | Supported languages | English only | Additional languages are not declared |
 | Primary stock reference | `pacific-strike-task-force` | Task-force persistence/economy/narrative structure |
 | Secondary stock references | `linear-campaign-proto-1`; `strike-group-molniya-campaign` / Operation Shadow | Minimal XAML/topology and compact narrative/Article 5 patterns |
-| Save path | `C:\Users\User\AppData\LocalLow\Triassic Games\Sea Power\saves\campaigns` | Confirm exact created filename during runtime test |
+| Save path | `C:\Users\User\AppData\LocalLow\Triassic Games\Sea Power\saves\campaigns` | Milestone saves confirmed through `Falklands Milestone B - Post B2.sav` |
 | Deployment method | `tools\Deploy-TestCampaign.ps1`; exact allowlisted campaign tree with dry-run and exact-folder undeploy | Proven in Milestone A |
 
 ## Known compatibility warnings
@@ -24,6 +24,9 @@
 - English-only FreeEvent content renders under the tested English UI. Other UI-language fallback remains untested.
 - Task Force Mode launch requires `CommanderSettingsFile` to resolve to a file containing at least one `CommanderNations` value and the corresponding `[OfficerRanks]` entry. Missing commander configuration produces a blocking “COMMANDER REQUIRED” dialog and an empty Service Record nation selector. Treat this as a mandatory preflight check for every future task-force campaign and laboratory.
 - Formula 134 costs are build-dependent and must be regenerated after a build/formula change.
+- A node allowlist did not exclude an already-owned persistent ship from automatic deployment when the builder was disabled. Use it to curate builder choices, not as the sole owned-unit deployment restriction.
+- Builder, repair, and rearm are independent controls. Repair is a paid per-ship action; rearm is automatic at an enabled node and displays a per-ship `Rearmed` badge.
+- Multiple purchasable hulls of one class require distinct available variants in the tested builder; each owned variant's purchase row becomes unavailable.
 - Never deploy to or modify `Sea Power_Data\StreamingAssets\original`.
 
 ## Milestone A proven layout

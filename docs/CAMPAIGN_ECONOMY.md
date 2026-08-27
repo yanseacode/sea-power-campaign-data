@@ -73,3 +73,17 @@ Measure the complete package on each supported difficulty; hull cost alone is no
 
 Regenerate this table after any game build or formula-version change.
 
+## Milestone B runtime ledger
+
+These values describe the disposable Moderate/default laboratory and are evidence, not campaign balance decisions.
+
+| Event | Spendable points | Force cap | Evidence |
+| --- | ---: | ---: | --- |
+| Initial laboratory state | 100 | 500 | Fresh pre-A save |
+| Mission A completion | 120 | 520 | +20 points, +20 cap |
+| Mission B-1 completion | 125 | 525 | +5 points, +5 cap; no repair/rearm |
+| Repair Knox Light damage | 115 | 525 | Explicit right-click repair, cost 10 |
+| Repair Perry Light damage | 94 | 525 | Explicit right-click repair, cost 21 |
+| Mission B-2 completion | 99 | 530 | +5 points, +5 cap; automatic rearm |
+
+Observed purchase costs were Knox Variant1/Variant2 97 each and Perry Variant1 206. Multiple Knox purchases required exposing separate numbered variants; this is a roster-availability rule, not evidence that campaign balance should use these candidates or values.
