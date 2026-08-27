@@ -20,20 +20,16 @@ Campaign-specific values remain TBD until the Mission 1 roster is reviewed. Runt
 
 Reference mechanics: completion points are spendable currency and receive the difficulty multiplier; completion cap points increase deployment cap without that multiplier. Builder availability and mission allowlists are separate gates. Granted units may be zero-cost and may increase cap by their value; this requires a fresh-save runtime check.
 
-## Mission economy table
+## Operation economy table
 
-| Mission | Starting cap | Starting spendable points | Minimum viable force | Comfortable force | Aspirational force | Completion points | Cap increase | Resupply status | Notes |
-| ---: | ---: | ---: | --- | --- | --- | ---: | ---: | --- | --- |
-| 1 | TBD | TBD | TBD after roster selection | TBD | TBD | TBD | TBD | TBD | No carrier |
-| 2 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
-| 3 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
-| 4 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
-| 5 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
-| 6 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
-| 7 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
-| 8 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
-| 9 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | |
-| 10 | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | Full carrier task force should be viable |
+The ledger will contain every playable main and optional operation. Narrative-only nodes receive rows only if they apply a mechanical change. The campaign is no longer constrained to exactly ten playable missions.
+
+| Operation ID | Route role | Starting cap | Starting spendable points | Minimum viable force | Comfortable force | Aspirational force | Completion points | Cap increase | Other reward/unlock | Logistics state | Main-route balance note |
+| --- | --- | ---: | ---: | --- | --- | --- | ---: | ---: | --- | --- | --- |
+| M1 | Main | TBD | TBD | TBD after roster selection | TBD | TBD | TBD | TBD | TBD | TBD | No carrier |
+| Future main operation | Main | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | TBD | Required-route economy must remain viable without optional rewards |
+| Future optional operation | Optional/lettered | Inherited/TBD | Inherited/TBD | Force-limited package TBD | TBD | TBD | TBD | TBD | Persistent advantage and/or unlock TBD | TBD | Benefit adds flexibility but cannot be required for main-route viability |
+| Final carrier-phase operation | Main | TBD | TBD | Complete carrier package TBD | TBD | TBD | TBD | TBD | Carrier roster/loadout tier already unlocked | TBD | Full carrier task force must be viable |
 
 ## Carrier target
 

@@ -1,10 +1,10 @@
 # Sea Power: Alternate-History Falklands 1982 Campaign
 
-Research and future mod source for a ten-mission alternate-history *Sea Power* campaign centered on a US and NATO response to Soviet intervention in the 1982 Falklands War.
+Research, design, test infrastructure, and future mod source for an alternate-history *Sea Power* campaign centered on a US and NATO response to Soviet intervention in the 1982 Falklands War. The campaign will use a main-operation arc plus optional/lettered missions and narrative nodes; the final playable and total node counts are design-driven rather than fixed at ten.
 
 ## Status
 
-The project is currently in reconnaissance and design. No campaign or mission content has been implemented.
+Reconnaissance and the disposable discovery/persistence laboratories are complete. Real campaign architecture and narrative design are paused while special node mechanics, optional operations, restrictions, rewards, and persistent consequences are formalized. No real campaign mission has been implemented.
 
 ## Repository policy
 
@@ -16,6 +16,5 @@ The project is currently in reconnaissance and design. No campaign or mission co
 ## Layout
 
 - `docs/` — reverse-engineering notes and planning references
-- `mod/` — future original mod/campaign content
-- `tools/` — future project-specific validation and packaging utilities
-
+- `mod/` — original disposable test campaign now; future real campaign content later
+- `tools/` — project-specific deployment and validation utilities

@@ -1787,7 +1787,7 @@ Each test should begin from a fresh save, record the game build and point-formul
 
 Static reconnaissance is sufficient to design and build the campaign without inventing a new framework. The principal formats, progression model, persistence data, economy, trigger system, unit references, and narrative mechanisms are confirmed.
 
-The remaining uncertainty is concentrated in runtime integration and balance, not basic architecture. None of the unknowns prevents creation of a minimal campaign skeleton, but several—especially user-campaign discovery, result progression, logistics timing, persistent generated-unit IDs, carrier accounting, and political ROE—must be resolved before committing to ten finished missions.
+The remaining uncertainty is concentrated in runtime integration and balance, not basic architecture. None of the unknowns prevents creation of a minimal campaign skeleton, but several—especially user-campaign discovery, result progression, logistics timing, persistent generated-unit IDs, carrier accounting, and political ROE—must be resolved before committing to the finished main and optional operation set.
 
 Stage 7 is complete. The staged implementation, testing, deployment, and version-control plan remain reserved for Stage 8.
 
@@ -1799,7 +1799,7 @@ The campaign should be built as original user/mod content, with Pacific Strike u
 
 The campaign is complete only when:
 
-- exactly ten playable missions form a coherent alternate-history arc;
+- the reviewed main-operation arc, optional/lettered operations, and narrative nodes form a coherent alternate-history campaign without an arbitrary fixed playable count;
 - Mission 1 begins below full US-Soviet war and offers no carrier task force;
 - player losses, damage, ammunition, points, cap, and selected forces carry correctly;
 - major resupply/reselection and low/no-resupply legs are clearly communicated and mechanically verified;
@@ -1863,11 +1863,11 @@ The first authored artifact should not be Mission 1. It should be a disposable t
 1. an English `FreeEvent` using a minimal proven XML template;
 2. a trivial mission with one controllable unit, one objective, and explicit victory/defeat triggers.
 
-This establishes discovery, path resolution, XML loading, save creation, progression, result threshold, and campaign removal without entangling real design. Once proven, replace the disposable content with a ten-mission timeline skeleton containing stable node numbers, placeholder names, and narrative slots. Placeholder tactical missions should remain deliberately unplayable until their implementation phase, avoiding false progress.
+This establishes discovery, path resolution, XML loading, save creation, progression, result threshold, and campaign removal without entangling real design. Once proven, replace the disposable content with a reviewed campaign-network skeleton containing stable node numbers, placeholder names, optional/lettered operations, and narrative slots. Placeholder tactical missions should remain deliberately unplayable until their implementation phase, avoiding false progress.
 
 #### Timeline numbering
 
-Numbered `[MissionN]` entries count every mission and narrative event, not only the ten tactical operations. Allocate a written node ledger before authoring. A practical campaign may contain 10 playable missions and roughly 10–18 narrative nodes. Stable node IDs prevent broken `Parents`, expiry targets, and old saves.
+Numbered `[MissionN]` entries count every main mission, optional mission, and narrative event. Allocate a written node ledger before authoring; do not infer the total from the number of main operations. Stable node IDs prevent broken `Parents`, expiry targets, and old saves.
 
 Use descriptive comments and a ledger such as:
 
@@ -2006,7 +2006,7 @@ Author logistics as a campaign rhythm, not an afterthought. Use three named node
 - **Continuation node:** builder access as narratively justified, but repair/rearm off; prior state matters.
 - **Detached node:** only assigned/selected subset deploys; main force remains out of action.
 
-A provisional ten-mission cadence for playtesting is:
+The following earlier ten-main-operation cadence is retained only as a logistics-pattern worksheet, not as a mission-count commitment:
 
 | Transition | Provisional logistics intent |
 | --- | --- |
@@ -2039,7 +2039,7 @@ If runtime testing cannot prove conditional allowlists directly from one variabl
 
 ### 10. Mission implementation order
 
-Do not build all ten missions chronologically. Implement in risk order:
+Do not build the complete operation network chronologically. Implement in risk order:
 
 1. **Disposable campaign smoke test** — discovery, free event, trivial scenario, result/save.
 2. **Persistence laboratory** — two tiny missions testing selected-unit carry-over, damage, ammunition, builder, repair, and rearm.
@@ -2050,7 +2050,7 @@ Do not build all ten missions chronologically. Implement in risk order:
 7. **Article 5 transition pair** — trigger mission plus following NATO-unlock node.
 8. **Carrier laboratory** — separate from a full scenario; establish package costs, generation, aviation, persistence, and performance.
 9. **Final carrier mission vertical slice** — worst-case unit count and air activity first.
-10. **Remaining mid-campaign missions** — fill the proven architecture around already-tested transitions.
+10. **Remaining main and optional operations** — fill the proven architecture around already-tested transitions.
 11. **Narrative/art completion** — replace placeholders only after node IDs and outcomes are stable.
 12. **Full-campaign balance pass** — fresh-save runs, then polish.
 
@@ -2156,12 +2156,12 @@ No backup of original game files is required if the project never modifies them.
 | --- | --- |
 | A — Discovery | User campaign appears, free event renders, trivial mission launches, no original files changed. |
 | B — Persistence | Selected force, loss, damage, ammunition, points, cap, repair/rearm, and save/reload verified across two nodes. |
-| C — Architecture | Stable ten-mission/node ledger, narrative bible, roster tiers, logistics cadence, and economy worksheet reviewed. |
+| C — Architecture | Stable main/optional/narrative node network, consequence ledger, narrative bible, roster tiers, logistics cadence, and economy worksheet reviewed. |
 | D — Mission 1 vertical slice | Cuba convoy scenario playable end-to-end with political ROE, both result paths, persistence, and acceptable detection timing. |
 | E — Escalation systems | Optional/variable consequence, Article 5 transition, NATO unlock, and debrief ordering verified. |
 | F — Aviation | Land-based squadron selection/basing/loss persistence verified. |
 | G — Carrier | Complete carrier package affordable at intended stage; generation, sorties, recovery, persistence, and performance pass. |
-| H — Ten missions alpha | Every mission loads and has functional primary victory/defeat with placeholder-complete narrative. |
+| H — Campaign alpha | Every approved main and optional mission loads and has functional primary victory/defeat with placeholder-complete narrative. |
 | I — Campaign beta | Main/all-optional routes complete on Moderate; economy and continuity defects resolved. |
 | J — Release candidate | Three difficulties, save/reload matrix, static validator, packaging, licensing review, and clean-install deployment pass. |
 
@@ -2180,7 +2180,7 @@ Use two secondary references rather than forcing Pacific Strike to answer everyt
 - `linear-campaign-proto-1` for full left/right XAML briefing panes, `OnCompleteEvent`, and alternative topology examples;
 - `strike-group-molniya-campaign`, especially Operation Shadow, for compact narrative pacing, mid-mission tasking changes, and the closest stock Article 5 story mechanism.
 
-The new campaign should copy neither campaign wholesale. It should reproduce the proven field relationships in newly authored files, reduce Pacific Strike's 31-node complexity to the nodes our ten missions actually require, and substitute explicit reviewed 1982 rosters.
+The new campaign should copy neither campaign wholesale. It should reproduce the proven field relationships in newly authored files, use only the main, optional, and narrative nodes justified by the reviewed design, and substitute explicit reviewed 1982 rosters.
 
 ### 15. Final reconnaissance conclusion
 
