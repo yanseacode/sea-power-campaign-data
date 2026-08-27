@@ -15,16 +15,15 @@
           FontWeight="Bold"
           TextAlignment="Center"
           TextWrapping="Wrap"
-          Text="Falklands Campaign Infrastructure Test — FreeEvent Loaded Successfully" />
+          Text="Falklands Campaign Persistence Laboratory — FreeEvent Loaded Successfully" />
         <TextBlock
           Foreground="LightGray"
           FontSize="28"
           Margin="0,40,0,0"
           TextAlignment="Center"
           TextWrapping="Wrap"
-          Text="Disposable Milestone A content. Continue to the trivial tactical mission." />
+          Text="Disposable Milestone B content. Continue to Mission A and record controlled task-force state." />
       </StackPanel>
     </Border>
   </Viewbox>
 </Page>
-
