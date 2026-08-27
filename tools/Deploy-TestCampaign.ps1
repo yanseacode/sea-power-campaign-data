@@ -58,6 +58,37 @@ if ($sourceFiles.Count -eq 0) {
     throw "No authored campaign files found below: $source"
 }
 
+# Task Force Mode preflight: a missing commander definition permits builder use
+# but blocks mission launch with an empty Service Record nation selector.
+$campaignFile = Join-Path $source 'campaign.ini'
+$campaignText = Get-Content -LiteralPath $campaignFile -Raw
+$commanderMatch = [regex]::Match($campaignText, '(?m)^CommanderSettingsFile\s*=\s*(?<path>[^;#\r\n]+?)\s*$')
+if (-not $commanderMatch.Success) {
+    throw 'Task Force Mode preflight failed: campaign.ini has no CommanderSettingsFile.'
+}
+
+$commanderRelativePath = $commanderMatch.Groups['path'].Value.Trim()
+$commanderFile = Join-Path $source $commanderRelativePath
+if (-not (Test-Path -LiteralPath $commanderFile -PathType Leaf)) {
+    throw "Task Force Mode preflight failed: commander settings file does not exist: $commanderFile"
+}
+
+$commanderText = Get-Content -LiteralPath $commanderFile -Raw
+$nationsMatch = [regex]::Match($commanderText, '(?m)^CommanderNations\s*=\s*(?<nations>[^;#\r\n]+?)\s*$')
+if (-not $nationsMatch.Success -or [string]::IsNullOrWhiteSpace($nationsMatch.Groups['nations'].Value)) {
+    throw 'Task Force Mode preflight failed: CommanderNations is missing or empty.'
+}
+
+$commanderNations = $nationsMatch.Groups['nations'].Value.Split('|', [System.StringSplitOptions]::RemoveEmptyEntries)
+foreach ($nation in $commanderNations) {
+    $escapedNation = [regex]::Escape($nation.Trim())
+    if (-not [regex]::IsMatch($commanderText, "(?m)^$escapedNation\s*=.+$")) {
+        throw "Task Force Mode preflight failed: [OfficerRanks] has no rank definition for nation '$($nation.Trim())'."
+    }
+}
+
+Write-Host "Commander preflight: $($commanderNations.Count) nation(s) configured in $commanderRelativePath"
+
 foreach ($file in $sourceFiles) {
     if (-not $file.FullName.StartsWith($sourcePrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
         throw "Refusing unexpected source file outside campaign tree: $($file.FullName)"

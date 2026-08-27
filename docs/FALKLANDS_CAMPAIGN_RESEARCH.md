@@ -449,12 +449,13 @@ Narrative document schemas are reserved for Stage 6, but their campaign attachme
 - `RequiredResult` for predictable tactical completion.
 - A valid unlock definition: initial `IsUnlocked=True` for entry nodes, and `Parents` or `UnlockConditionsJSON` for later nodes.
 - For task-force mode: `Enabled=True`, a valid `RosterFile`, starting points/cap, mission generation/deployment rules, and explicit builder/repair/rearm values wherever logistics matter.
+- **Runtime correction (Milestone A, 2026-08-25):** a playable Task Force Mode campaign must also provide `CommanderSettingsFile` and a valid referenced file containing at least one `CommanderNations` entry plus that nation's officer-rank definition. Without it, the builder can purchase a vessel, but `Play Mission` stops at “Commit a commander before launching Task Force Mode missions”; opening Service Record then shows a blank nation selector and cannot confirm a commander. This was observed in game build 0.8.2 Build #363 (23607), captured from display 1, and is mandatory for every future task-force skeleton/test.
 
 #### Optional or presentation/specialization fields
 
 - `BackgroundImage`, map-display/tile fields, icon type, mission images, special notes, warning popups, and resupply explanatory text.
 - Non-English localized values where English fallback exists. Missing assets still risk visibly missing content and should be validated.
-- `CommanderSettingsFile`, commander/ribbon/crew rules, difficulty presets, threat profiles, deployment preview, air-tasking, airbase prep, reward units, loadout unlocks, and expiry rules.
+- Commander ribbons and extended service-record presentation, difficulty presets, threat profiles, deployment preview, air-tasking, airbase prep, reward units, loadout unlocks, and expiry rules. `CommanderSettingsFile` itself is mandatory for a launchable Task Force Mode campaign in the tested build; see the runtime correction above.
 - `IsComplete` normally begins false; both state flags are subsequently persisted in saves.
 - `OnCompleteActionJSON` and `OnCompletePath_*`.
 
@@ -2188,3 +2189,40 @@ All eight requested analysis stages are complete. The current game provides a wo
 The correct first implementation task in a future authorized build session is **Milestone A's disposable campaign-discovery smoke test**, not Mission 1. That test should create only original temporary user content, prove the deployment contract, and be removed or replaced after its findings are recorded.
 
 No campaign or mission content has been created during reconnaissance.
+
+## Milestone A runtime addendum — 2026-08-25 to 2026-08-27
+
+Milestone A was completed against Sea Power 0.8.2 Build #363 (23607) with the disposable campaign ID `falklands-infrastructure-test`.
+
+### Confirmed runtime behavior
+
+1. A new linear Task Force Mode campaign is discovered at `Sea Power_Data\StreamingAssets\user\campaigns\<campaign-id>` without a campaign-local `_info.ini`.
+2. Full application restart is not required for discovery. With Sea Power already running and the campaign initially absent, deploying the folder and reopening the Campaigns list made it appear.
+3. Campaign title metadata hot-reloads after leaving and reopening the Campaigns list.
+4. An English-only single-page FreeEvent renders and its completion unlocks its child mission.
+5. A generated task-force mission launches after a commander is configured, explicit victory/end actions return a result, and `RequiredResult=CostlyVictory` accepts a higher `DecisiveVictory` result.
+6. The test returned score 1110, one Osa-class kill, no losses, and an undamaged surviving Perry whose proficiency increased from Trained to Seasoned.
+7. Starting points/cap were 500/500. The Perry cost 206, leaving 294 launch points. The authored +10 completion point and +10 cap rewards produced 304 available points and cap 510.
+8. The save records one-time reward guards: `CompletionRewardsApplied=True`, `CompletionPointRewardApplied=10`, and `CompletionCapRewardApplied=10`.
+9. The explicit save is `C:\Users\User\AppData\LocalLow\Triassic Games\Sea Power\saves\campaigns\Falklands Milestone A.sav`. It points to `campaigns/falklands-infrastructure-test/campaign.ini` and contains completed nodes, commander state, roster instance ID, post-mission ammunition/damage, reward, result, and debrief sections.
+10. The Task Force Builder is unavailable after the final test node because the campaign has no successor playable node. This is expected for the two-node harness and does not establish builder timing between missions; Milestone B must test enabled and disabled successor nodes explicitly.
+11. Deployment and exact-folder undeployment changed only `StreamingAssets\user\campaigns\falklands-infrastructure-test`. The original tree remained at 7,011 files and 5,122,868,355 bytes before and after deployment.
+
+### Runtime correction: commander settings are mandatory
+
+The first launch attempt failed after successful builder purchase. `Play Mission` displayed “Commit a commander before launching Task Force Mode missions,” and Service Record contained no selectable nations. The campaign had omitted `CommanderSettingsFile`.
+
+Adding a referenced commander settings file with `CommanderNations=US`, a matching default nation, navy presentation, and an `[OfficerRanks] US=...` definition resolved the blocker after relaunch. For this build, a valid commander configuration is a mandatory part of every playable Task Force Mode campaign skeleton. The deployment tool now rejects missing commander files, empty nation lists, or missing rank definitions before copying content.
+
+### Log observation
+
+The prior-run Unity log contained a Steam API initialization exception and an existing duplicate `FileManager` singleton warning, followed by “Game passed file validity checks.” No campaign-specific load/parser error was found. The successful run's `Player.log` remained empty while the process was active, so absence of every possible warning is not claimed.
+
+### Evidence captures
+
+- Missing-commander blocker: `D:\Projects\mcp-screenshot\captures\cap-2026-08-26T00-17-40-361Z.png`
+- Completed campaign node: `D:\Projects\mcp-screenshot\captures\cap-2026-08-26T00-26-23-019Z.png`
+- Decisive Victory debrief and rewards: `D:\Projects\mcp-screenshot\captures\cap-2026-08-26T00-27-42-430Z.png`
+- Metadata hot reload: `D:\Projects\mcp-screenshot\captures\cap-2026-08-26T00-29-15-777Z.png`
+
+Milestone A's exit gate is satisfied. The remaining persistence, repair/rearm, allowlist, builder-transition, loss, and reload questions belong to Milestone B.

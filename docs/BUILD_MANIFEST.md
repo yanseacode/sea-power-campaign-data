@@ -13,13 +13,43 @@
 | Primary stock reference | `pacific-strike-task-force` | Task-force persistence/economy/narrative structure |
 | Secondary stock references | `linear-campaign-proto-1`; `strike-group-molniya-campaign` / Operation Shadow | Minimal XAML/topology and compact narrative/Article 5 patterns |
 | Save path | `C:\Users\User\AppData\LocalLow\Triassic Games\Sea Power\saves\campaigns` | Confirm exact created filename during runtime test |
-| Deployment method | Project-owned PowerShell deployment tool; exact copy only | To be implemented in Milestone A |
+| Deployment method | `tools\Deploy-TestCampaign.ps1`; exact allowlisted campaign tree with dry-run and exact-folder undeploy | Proven in Milestone A |
 
 ## Known compatibility warnings
 
 - Sea Power is under active development; parser behavior, generated saves, point formula, and cache format may change.
 - The game’s user data advertises Steam Cloud synchronization. Deployed content is disposable and never the source of truth.
-- Campaign discovery, campaign-local `_info.ini`, restart requirements, metadata hot reload, English fallback, and save naming are not yet runtime-confirmed for this authored campaign.
+- Build 0.8.2 discovers a newly deployed campaign after leaving and reopening the Campaigns list; a full application restart is not required. Campaign title changes hot-reload on the same refresh.
+- A campaign-local `_info.ini` is not required for this tested linear Task Force Mode layout.
+- English-only FreeEvent content renders under the tested English UI. Other UI-language fallback remains untested.
+- Task Force Mode launch requires `CommanderSettingsFile` to resolve to a file containing at least one `CommanderNations` value and the corresponding `[OfficerRanks]` entry. Missing commander configuration produces a blocking “COMMANDER REQUIRED” dialog and an empty Service Record nation selector. Treat this as a mandatory preflight check for every future task-force campaign and laboratory.
 - Formula 134 costs are build-dependent and must be regenerated after a build/formula change.
 - Never deploy to or modify `Sea Power_Data\StreamingAssets\original`.
 
+## Milestone A proven layout
+
+```text
+StreamingAssets/user/campaigns/falklands-infrastructure-test/
+├── campaign.ini
+├── commander_settings.ini
+├── player_task_force_roster.ini
+├── art/
+│   └── infrastructure_test.xml
+└── missions/
+    └── 01 Infrastructure Smoke Test.ini
+```
+
+No campaign-local `_info.ini` or custom art was required.
+
+## Task Force Mode preflight
+
+Before every new task-force test campaign is deployed, verify:
+
+- `[TaskForceMode] Enabled=True`;
+- `RosterFile` exists and contains the mission's allowed units;
+- `CommanderSettingsFile` exists;
+- `[CommanderSettings] CommanderNations` contains at least one nation;
+- the default commander nation is in that list;
+- `[OfficerRanks]` contains an entry for every selectable nation;
+- the initial points/cap can purchase the intended test force;
+- every playable node explicitly defines builder, repair, rearm, generation, and included-force behavior.
