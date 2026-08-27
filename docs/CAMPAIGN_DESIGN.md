@@ -65,3 +65,13 @@ This is the authoritative creative and strategic design ledger. It records only 
 | No-resupply continuation | Prior losses, damage, and ammunition expenditure remain consequential | TBD |
 | Detached operation | Only a selected subset deploys; undeployed force should remain unchanged | TBD |
 
+## Optional-mission consequence patterns
+
+Optional missions may provide more than points and cap. Pacific Strike demonstrates useful player-observed patterns that the Falklands campaign may adopt after its ten-mission outline is reviewed:
+
+- a detached reconnaissance mission can set a persistent intelligence flag that reveals or identifies specified targets at the start of a later mission;
+- destroying an enemy group in an earlier mission can set a persistent flag that prevents that group from spawning later;
+- optional operations can expire when the player advances past their decision window;
+- restricted operations can limit deployment to a single vessel or another explicit maximum without removing the rest of the owned roster.
+
+These consequences should reward preparation without making the mandatory route unwinnable. No Falklands mission assignment or specific consequence has been selected yet.

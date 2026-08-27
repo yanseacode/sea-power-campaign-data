@@ -27,6 +27,8 @@
 - A node allowlist did not exclude an already-owned persistent ship from automatic deployment when the builder was disabled. Use it to curate builder choices, not as the sole owned-unit deployment restriction.
 - Builder, repair, and rearm are independent controls. Repair is a paid per-ship action; rearm is automatic at an enabled node and displays a per-ship `Rearmed` badge.
 - Multiple purchasable hulls of one class require distinct available variants in the tested builder; each owned variant's purchase row becomes unavailable.
+- Restrict deployed surface-force size with `TaskForceModeRequiredUnitType=Vessel` and `TaskForceModeMaxUnits=<count>`; stock UI behavior is confirmed at limits of one and three. Do not substitute an allowlist for this quantity control.
+- Cross-mission tactical consequences use persistent variables: later missions can reveal targets or suppress unit spawns based on earlier optional outcomes.
 - Never deploy to or modify `Sea Power_Data\StreamingAssets\original`.
 
 ## Milestone A proven layout
