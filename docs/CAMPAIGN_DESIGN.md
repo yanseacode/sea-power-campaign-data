@@ -2,7 +2,7 @@
 
 ## Document status
 
-This is the authoritative creative and strategic design ledger. It records only reviewed decisions. Runtime mechanics remain governed by `FALKLANDS_CAMPAIGN_RESEARCH.md` and evidence in `TEST_MATRIX.md`.
+This is the authoritative Falklands creative and strategic design ledger. Reusable runtime mechanics are governed by [`README.md`](README.md) and its architecture/reference manuals; project runtime evidence remains in [`TEST_MATRIX.md`](TEST_MATRIX.md). The original staged reconnaissance is retained in [`FALKLANDS_CAMPAIGN_RESEARCH.md`](FALKLANDS_CAMPAIGN_RESEARCH.md).
 
 ## Campaign premise
 

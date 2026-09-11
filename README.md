@@ -1,20 +1,35 @@
-# Sea Power: Alternate-History Falklands 1982 Campaign
+# Sea Power Campaign Authoring Research
 
-Research, design, test infrastructure, and future mod source for an alternate-history *Sea Power* campaign centered on a US and NATO response to Soviet intervention in the 1982 Falklands War. The campaign will use a main-operation arc plus optional/lettered missions and narrative nodes; the final playable and total node counts are design-driven rather than fixed at ten.
+Reusable, evidence-led documentation for building and maintaining custom campaigns for *Sea Power*. The repository also contains a disposable runtime laboratory and separate design notes for an alternate-history Falklands project.
 
-## Status
+## Start here
 
-Reconnaissance and the disposable discovery/persistence laboratories are complete. Real campaign architecture and narrative design are paused while special node mechanics, optional operations, restrictions, rewards, and persistent consequences are formalized. No real campaign mission has been implemented.
+- [`docs/README.md`](docs/README.md) — documentation map, evidence standard, and current build baseline
+- [`docs/architecture/campaign-system.md`](docs/architecture/campaign-system.md) — campaign topology and progression
+- [`docs/architecture/mission-system.md`](docs/architecture/mission-system.md) — tactical scenario structure
+- [`docs/architecture/persistence-and-task-forces.md`](docs/architecture/persistence-and-task-forces.md) — force selection, economy, logistics, and carry-over
+- [`docs/reference/campaign-fields.md`](docs/reference/campaign-fields.md) — campaign field reference
+- [`docs/reference/mission-fields.md`](docs/reference/mission-fields.md) — mission field reference
+- [`docs/build-audits/0.8.2-build-366.md`](docs/build-audits/0.8.2-build-366.md) — current #363 to #366 compatibility audit
+
+## Repository areas
+
+- `docs/architecture/` — reusable system explanations
+- `docs/reference/` — field and filesystem references
+- `docs/examples/` — annotated stock implementations; no stock files are redistributed
+- `docs/build-audits/` — version-to-version change records
+- `docs/workflows/` — authoring, testing, and update procedures
+- `docs/projects/` and the older project ledgers — campaign-specific material
+- `mod/` — original disposable campaign laboratory; not a production campaign
+- `tools/` — project-authored deployment and validation utilities
 
 ## Repository policy
 
-- This repository contains only original project documentation, authored mod files, and project tooling.
-- Original game executables, assemblies, assets, campaign files, scenarios, unit definitions, localization, caches, and saves are excluded.
-- The installed game's `StreamingAssets` content may be inspected as a local reference, but shipped files must not be copied into this repository without separate redistribution verification.
-- Small excerpts may be quoted in research documentation when necessary to explain a format.
+- Original game executables, assemblies, assets, campaigns, missions, unit definitions, localization, caches, and saves are not committed.
+- Installed `StreamingAssets/original` content is a read-only reference.
+- Small field excerpts may be quoted to explain a format; full shipped files and bulk extracted databases are excluded.
+- Authored mods deploy only beneath `StreamingAssets/user`; the repository remains the source of truth.
 
-## Layout
+## Current status
 
-- `docs/` — reverse-engineering notes and planning references
-- `mod/` — original disposable test campaign now; future real campaign content later
-- `tools/` — project-specific deployment and validation utilities
+The reusable manual is validated statically against 0.8.2 Build #366 (23810). Runtime observations from Build #363 are retained with their original build label and require targeted revalidation where #364–#366 changed the relevant subsystem. No production campaign has been implemented.

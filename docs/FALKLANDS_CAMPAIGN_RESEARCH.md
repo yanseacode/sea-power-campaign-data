@@ -1,10 +1,12 @@
 # Alternate-History Falklands Campaign Research
 
+> Legacy evidence record. This staged document preserves the original Build #363 reconnaissance and project reasoning. The campaign-agnostic, updateable reference now begins at [`docs/README.md`](README.md), and current-build changes are tracked in [`build-audits/0.8.2-build-366.md`](build-audits/0.8.2-build-366.md). Treat unlabeled point values and runtime behavior below as #363-era unless a later addendum says otherwise.
+
 ## Scope and safety
 
 - Workspace inspected: `E:\Games\Sea_Power_BETA\Sea Power`
 - First reconnaissance pass: 2026-08-25
-- Current scope: **Stage 1 — Workspace map only**
+- Original staged scope began with Stage 1 and ultimately completed Stages 1–8 plus runtime addenda.
 - Stock content under `Sea Power_Data\StreamingAssets\original` is read-only reference material.
 - Candidate custom content location is `Sea Power_Data\StreamingAssets\user`; no campaign or mission content has been created or changed.
 - This research document is the only file created during Stage 1.

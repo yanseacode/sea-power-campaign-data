@@ -4,6 +4,8 @@
 
 Campaign-specific values remain TBD until the Mission 1 roster is reviewed. Runtime laboratory values will be recorded as evidence, not silently promoted into campaign balance decisions.
 
+> Build warning: every listed numerical unit-price snapshot was captured under point formula 134 on Build #363. Build #366 uses formula 140 and corrected optional-weapon, weapon-swap, manual-price-scaling, and stores pricing. These snapshots are historical evidence only until recaptured; see [`build-audits/0.8.2-build-366.md`](build-audits/0.8.2-build-366.md).
+
 ## Global assumptions
 
 | Item | Pacific Strike reference | Falklands campaign |

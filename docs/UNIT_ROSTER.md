@@ -4,6 +4,8 @@
 
 This is a campaign shortlist, not a copy of the Sea Power database. Every eventual entry must name an exact numbered variant or squadron, a reviewed 1982 loadout, and its current point value. `TBD` means the candidate is not yet approved for a mission allowlist.
 
+> Build warning: availability metadata, loadouts, refueling, submarines, sensors, and formula-derived costs changed in Builds #364–#366. Existing numerical costs are formula-134 historical snapshots. Revalidate every selected variant against Build #366 before use; see [`build-audits/0.8.2-build-366.md`](build-audits/0.8.2-build-366.md).
+
 | Internal type | Variant/Squadron | Display nation | Actual platform | Campaign role | Earliest campaign tier | 1982 validity | Point cost | Notes / substitution caveat |
 | --- | --- | --- | --- | --- | --- | --- | ---: | --- |
 
@@ -112,4 +114,3 @@ No British or Argentine stand-in may enter an allowlist or scenario ledger witho
 4. intended compensation through quantity, loadout, proficiency, readiness, ROE, positioning, objectives, or scenario timing.
 
 A nation/flag override changes presentation only. It must never be described as changing the underlying platform capability.
-

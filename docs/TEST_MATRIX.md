@@ -1,5 +1,7 @@
 # Runtime Test Matrix
 
+> Project-specific runtime evidence below was captured on Build #363. The reusable test catalog is [`workflows/runtime-test-matrix.md`](workflows/runtime-test-matrix.md). Tests affected by #364–#366 are queued for regression in the [Build #366 audit](build-audits/0.8.2-build-366.md); historical observations remain valid evidence for their stated build.
+
 ## Evidence rules
 
 - Use a fresh disposable save unless the test explicitly verifies reload behavior.

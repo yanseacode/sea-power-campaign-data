@@ -4,8 +4,9 @@
 | --- | --- | --- |
 | Campaign project ID | TBD before real campaign implementation | Do not reuse disposable test ID |
 | Disposable test campaign ID | `falklands-infrastructure-test` | Reserved for Milestones A and B only |
-| Current game build/version | 0.8.2 Build #363 (23607), 2026-08-04 | Installed `changelog.txt` |
-| Point formula version | 134 | Current research/decompiled implementation |
+| Current static game baseline | 0.8.2 Build #366 (23810), 2026-09-06 | Read-only inspection of the new installation and `changelog.txt` |
+| Last project runtime baseline | 0.8.2 Build #363 (23607), 2026-08-04 | Disposable campaign laboratory results |
+| Point formula version | 140 current; 134 for existing price snapshots | Reflected `SeaPower.PointValueTuning`; recapture #366 prices before balancing |
 | Repository source path | `E:\Games\Sea_Power_BETA\Sea Power\sea-power-falklands-1982` | Git source of truth |
 | Authored campaign source | `mod\campaigns\falklands-infrastructure-test` | Created during Milestone A |
 | Deployment destination | `E:\Games\Sea_Power_BETA\Sea Power\Sea Power_Data\StreamingAssets\user\campaigns\falklands-infrastructure-test` | Exact disposable destination |
@@ -23,7 +24,8 @@
 - A campaign-local `_info.ini` is not required for this tested linear Task Force Mode layout.
 - English-only FreeEvent content renders under the tested English UI. Other UI-language fallback remains untested.
 - Task Force Mode launch requires `CommanderSettingsFile` to resolve to a file containing at least one `CommanderNations` value and the corresponding `[OfficerRanks]` entry. Missing commander configuration produces a blocking “COMMANDER REQUIRED” dialog and an empty Service Record nation selector. Treat this as a mandatory preflight check for every future task-force campaign and laboratory.
-- Formula 134 costs are build-dependent and must be regenerated after a build/formula change.
+- Formula 134 costs are historical and must be regenerated under formula 140 before current balancing. Build #366 also corrected optional-weapon, weapon-swap, manual-price-scaling, and stores pricing paths.
+- Build #366 adds dynamic theater generation, year-based loadout progression, Air Operations editing, and campaign/save fixes. See `build-audits/0.8.2-build-366.md`; affected #363 runtime results remain labeled rather than assumed current.
 - A node allowlist did not exclude an already-owned persistent ship from automatic deployment when the builder was disabled. Use it to curate builder choices, not as the sole owned-unit deployment restriction.
 - Builder, repair, and rearm are independent controls. Repair is a paid per-ship action; rearm is automatic at an enabled node and displays a per-ship `Rearmed` badge.
 - Multiple purchasable hulls of one class require distinct available variants in the tested builder; each owned variant's purchase row becomes unavailable.
